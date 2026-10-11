@@ -14,9 +14,11 @@ function CodeBlock({ children, className }: { children: React.ReactNode; classNa
   const codeText = String(children).replace(/\n$/, "");
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(codeText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(codeText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const isInline = !className && !String(children).includes("\n");
@@ -56,24 +58,44 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
         remarkPlugins={[remarkGfm]}
         components={{
           h1: ({ children }) => (
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white mt-8 mb-4">
+            <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-zinc-900 dark:text-white mt-8 mb-4">
               {children}
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white mt-10 mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-zinc-900 dark:text-white mt-10 mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-white mt-6 mb-3">
+            <h3 className="text-xl sm:text-2xl font-serif font-semibold tracking-tight text-zinc-900 dark:text-white mt-6 mb-3">
               {children}
             </h3>
+          ),
+          h4: ({ children }) => (
+            <h4 className="text-lg font-semibold text-zinc-900 dark:text-white mt-4 mb-2">
+              {children}
+            </h4>
           ),
           p: ({ children }) => (
             <p className="my-4 text-base sm:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300">
               {children}
             </p>
+          ),
+          strong: ({ children }) => (
+            <strong className="font-semibold text-zinc-900 dark:text-white">
+              {children}
+            </strong>
+          ),
+          em: ({ children }) => (
+            <em className="italic text-zinc-800 dark:text-zinc-200">
+              {children}
+            </em>
+          ),
+          del: ({ children }) => (
+            <del className="line-through text-zinc-400 dark:text-zinc-500">
+              {children}
+            </del>
           ),
           ul: ({ children }) => (
             <ul className="my-4 pl-6 list-disc space-y-2 text-zinc-700 dark:text-zinc-300">
@@ -86,10 +108,10 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
             </ol>
           ),
           li: ({ children }) => (
-            <li className="text-base leading-relaxed">{children}</li>
+            <li className="text-base leading-relaxed pl-1">{children}</li>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="my-6 pl-4 border-l-4 border-indigo-500 italic text-zinc-600 dark:text-zinc-400 bg-indigo-50/50 dark:bg-indigo-950/20 py-2 rounded-r-lg">
+            <blockquote className="my-6 pl-4 border-l-4 border-indigo-500 italic text-zinc-700 dark:text-zinc-300 bg-zinc-100/60 dark:bg-zinc-900/60 py-3 rounded-r-xl">
               {children}
             </blockquote>
           ),
@@ -105,6 +127,44 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
             >
               {children}
             </a>
+          ),
+          img: ({ src, alt }) => (
+            <span className="block my-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-md">
+              <img src={src} alt={alt || "Blog image"} className="w-full h-auto object-cover" />
+              {alt && (
+                <span className="block p-2 text-center text-xs text-zinc-500 bg-zinc-50 dark:bg-zinc-900/50">
+                  {alt}
+                </span>
+              )}
+            </span>
+          ),
+          table: ({ children }) => (
+            <div className="my-6 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+              <table className="w-full text-left text-sm border-collapse">
+                {children}
+              </table>
+            </div>
+          ),
+          thead: ({ children }) => (
+            <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-xs font-semibold uppercase text-zinc-600 dark:text-zinc-400 font-mono">
+              {children}
+            </thead>
+          ),
+          tbody: ({ children }) => (
+            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
+              {children}
+            </tbody>
+          ),
+          tr: ({ children }) => <tr>{children}</tr>,
+          th: ({ children }) => (
+            <th className="py-3 px-4 font-semibold text-zinc-900 dark:text-zinc-100">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+              {children}
+            </td>
           ),
           code: ({ className, children }) => (
             <CodeBlock className={className}>{children}</CodeBlock>
