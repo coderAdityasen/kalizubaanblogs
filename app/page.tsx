@@ -19,15 +19,15 @@ export default async function HomePage() {
       {/* Editorial Header */}
       <section className="border-b border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/40 py-12 sm:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="max-w-2xl">
-            <span className="text-xs font-semibold tracking-wider uppercase text-indigo-600 dark:text-indigo-400 mb-2 block">
-              The Digital Journal
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold tracking-wider uppercase text-rose-600 dark:text-rose-400 mb-2 block font-mono">
+              The Unfiltered Tech Journal
             </span>
-            <h1 className="text-3xl sm:text-5xl font-serif font-black tracking-tight text-zinc-900 dark:text-white leading-[1.15]">
-              Perspectives on Technology, Architecture &amp; Craft.
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-zinc-900 dark:text-white leading-[1.12]">
+              Kali Zubaan.
             </h1>
-            <p className="mt-3 sm:mt-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-              A curated publication covering distributed systems, autonomous agents, modern engineering, and software design.
+            <p className="mt-3 sm:mt-4 text-base sm:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
+              Bold perspectives, distributed systems, autonomous agents, and raw software engineering craft. No fluff.
             </p>
           </div>
         </div>
