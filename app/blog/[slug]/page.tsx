@@ -6,7 +6,7 @@ import { getPostBySlug, getPosts } from "@/lib/supabase";
 import MarkdownContent from "@/components/MarkdownContent";
 import ShareBar from "@/components/ShareBar";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kalizubaan.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
