@@ -4,7 +4,7 @@ import { getPosts } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kalizubaan.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
   const posts = await getPosts();
 
   const postsUrls = posts.map((post) => ({
