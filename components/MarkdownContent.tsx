@@ -130,7 +130,13 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
           ),
           img: ({ src, alt }) => (
             <span className="block my-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-md">
-              <img src={src} alt={alt || "Blog image"} className="w-full h-auto object-cover" />
+              <img
+                src={src}
+                alt={alt || "Blog image"}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto object-cover"
+              />
               {alt && (
                 <span className="block p-2 text-center text-xs text-zinc-500 bg-zinc-50 dark:bg-zinc-900/50">
                   {alt}
