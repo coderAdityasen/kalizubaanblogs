@@ -172,6 +172,9 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <img
                   src={post.author_avatar}
                   alt={post.author_name}
+                  width={40}
+                  height={40}
+                  decoding="async"
                   className="w-10 h-10 rounded-full object-cover ring-2 ring-rose-500/20"
                 />
               ) : (
@@ -204,6 +207,11 @@ export default async function BlogPostPage({ params }: PageProps) {
               <img
                 src={post.cover_image}
                 alt={post.title}
+                width={1200}
+                height={675}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>

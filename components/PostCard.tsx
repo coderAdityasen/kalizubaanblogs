@@ -23,6 +23,11 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
             <img
               src={post.cover_image}
               alt={post.title}
+              width={1200}
+              height={675}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
@@ -85,6 +90,10 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
                 <img
                   src={post.author_avatar}
                   alt={post.author_name}
+                  width={36}
+                  height={36}
+                  loading="lazy"
+                  decoding="async"
                   className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/20"
                 />
               ) : (
@@ -122,6 +131,10 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
             <img
               src={post.cover_image}
               alt={post.title}
+              width={640}
+              height={360}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
@@ -181,6 +194,10 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
             <img
               src={post.author_avatar}
               alt={post.author_name}
+              width={28}
+              height={28}
+              loading="lazy"
+              decoding="async"
               className="w-7 h-7 rounded-full object-cover"
             />
           ) : (
