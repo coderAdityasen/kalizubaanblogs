@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { staticPages } from "@/lib/site";
 
 export default function Footer() {
   return (
@@ -29,7 +30,15 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-400 dark:text-zinc-500">
+        <nav aria-label="Site information" className="mt-8 flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+          {staticPages.map((page) => (
+            <Link key={page.href} href={page.href} className="hover:text-zinc-950 dark:hover:text-white transition-colors">
+              {page.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-400 dark:text-zinc-500">
           <span>© 2026 Kali Zubaan. All rights reserved.</span>
           <span>Designed for readers. Built with Next.js &amp; Supabase.</span>
         </div>

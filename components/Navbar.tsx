@@ -47,6 +47,19 @@ export default function Navbar() {
           >
             Newsletter
           </Link>
+          <Link
+            href="/about"
+            className={`transition-colors ${pathname === "/about" ? "text-zinc-950 dark:text-white font-semibold" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"}`}
+          >
+            About
+          </Link>
+
+          <Link
+            href="/contact"
+            className={`transition-colors ${pathname === "/contact" ? "text-zinc-950 dark:text-white font-semibold" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"}`}
+          >
+            Contact
+          </Link>
         </nav>
       </div>
     </header>
