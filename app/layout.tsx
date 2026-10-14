@@ -113,6 +113,10 @@ export default function RootLayout({
       "@type": "Organization",
       name: "Kali Zubaan",
       url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo.png`,
+      },
     },
     potentialAction: {
       "@type": "SearchAction",
