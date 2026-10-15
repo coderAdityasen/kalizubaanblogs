@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Clock, Calendar, ArrowUpRight } from "lucide-react";
-import { BlogPost } from "@/types/blog";
+import { BlogPostSummary } from "@/types/blog";
 
 interface PostCardProps {
-  post: BlogPost;
+  post: BlogPostSummary;
   featured?: boolean;
 }
 
