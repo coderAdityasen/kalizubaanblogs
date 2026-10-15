@@ -11,6 +11,15 @@ export default async function HomePage() {
     checkSupabaseStatus(),
   ]);
 
+  // BlogList is a client component, so everything passed to it is serialised
+  // into the page HTML. Cards only need title, excerpt, cover and meta, so drop
+  // the full Markdown body of every post to keep the homepage light.
+  const postSummaries = posts.map((post) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { content, ...summary } = post;
+    return summary;
+  });
+
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50/50 dark:bg-zinc-950">
       {/* Discreet Admin Setup Alert if table is missing */}
@@ -35,7 +44,7 @@ export default async function HomePage() {
 
       {/* Main Content Area */}
       <main id="latest" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full flex-1">
-        <BlogList initialPosts={posts} />
+        <BlogList initialPosts={postSummaries} />
 
         {/* Reader Newsletter Subscription */}
         <Newsletter />

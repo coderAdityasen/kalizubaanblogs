@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from "react";
 import { Search, Filter, Sparkles, BookOpen } from "lucide-react";
-import { BlogPost } from "@/types/blog";
+import { BlogPostSummary } from "@/types/blog";
 import PostCard from "./PostCard";
 
 interface BlogListProps {
-  initialPosts: BlogPost[];
+  initialPosts: BlogPostSummary[];
 }
 
 export default function BlogList({ initialPosts }: BlogListProps) {
