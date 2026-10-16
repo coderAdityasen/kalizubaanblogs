@@ -5,6 +5,8 @@ import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { getPostBySlug, getPosts } from "@/lib/supabase";
 import MarkdownContent from "@/components/MarkdownContent";
 import ShareBar from "@/components/ShareBar";
+import RelatedPosts from "@/components/RelatedPosts";
+import { getRelatedPosts } from "@/lib/related";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
@@ -84,11 +86,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, allPosts] = await Promise.all([getPostBySlug(slug), getPosts()]);
 
   if (!post) {
     notFound();
   }
+
+  const relatedPosts = getRelatedPosts(post, allPosts, 3);
 
   const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
     month: "long",
@@ -240,6 +244,9 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
             </div>
           )}
+
+          {/* Related articles: next step for readers, internal links for search engines */}
+          <RelatedPosts posts={relatedPosts} />
 
           {/* Bottom Navigation */}
           <div className="mt-16 p-6 sm:p-8 rounded-3xl bg-zinc-100/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
