@@ -46,8 +46,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       post.category,
       "Kali Zubaan",
       "kalizubaan",
-      "tech blog",
-      "engineering",
     ],
     authors: [{ name: post.author_name || "Aditya" }],
     creator: post.author_name || "Aditya",
