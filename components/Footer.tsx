@@ -10,16 +10,19 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex flex-col items-center sm:items-start gap-1">
             <span className="font-serif font-bold text-base text-zinc-900 dark:text-zinc-100">
-              Kali Zubaan
+              Kali Zubaan Blog
             </span>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Unfiltered takes on money, health, side hustles and tech.
+              Unfiltered takes on money, health, side hustles and tech in India.
             </p>
           </div>
 
           <div className="flex items-center gap-6 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
             <Link href="/" className="hover:text-zinc-950 dark:hover:text-white transition-colors">
               Home
+            </Link>
+            <Link href="/blog" className="hover:text-zinc-950 dark:hover:text-white transition-colors">
+              All Articles
             </Link>
             <Link href="/#latest" className="hover:text-zinc-950 dark:hover:text-white transition-colors">
               Latest Stories

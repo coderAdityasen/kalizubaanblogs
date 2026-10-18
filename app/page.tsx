@@ -33,10 +33,10 @@ export default async function HomePage() {
               Money · Health · Side Hustles · Tech
             </span>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-zinc-900 dark:text-white leading-[1.12]">
-              Kali Zubaan.
+              Kali Zubaan Blog
             </h1>
             <p className="mt-3 sm:mt-4 text-base sm:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-              Plain-spoken breakdowns of personal finance and tax, health research, real side-hustle income stories, and tech news, with the numbers checked. No fluff.
+              The Kali Zubaan Blog: plain-spoken breakdowns of personal finance and tax, health research, real side-hustle income stories, and tech news, with the numbers checked. No fluff.
             </p>
           </div>
         </div>

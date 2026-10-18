@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { getPosts } from "@/lib/supabase";
 import { absoluteUrl, staticPages } from "@/lib/site";
+import { getCategories } from "@/lib/blog-index";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  const latestPostDate = posts[0]
+    ? new Date(posts[0].updated_at || posts[0].created_at)
+    : new Date();
+
+  const categoryUrls = getCategories(posts).map((cat) => {
+    const newest = posts.find((post) => post.category === cat.name);
+    return {
+      url: absoluteUrl(`/blog/category/${cat.slug}`),
+      lastModified: newest ? new Date(newest.updated_at || newest.created_at) : latestPostDate,
+      changeFrequency: "daily" as const,
+      priority: 0.7,
+    };
+  });
+
   return [
     {
       url: siteUrl,
@@ -22,6 +37,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily" as const,
       priority: 1.0,
     },
+    {
+      url: absoluteUrl("/blog"),
+      lastModified: latestPostDate,
+      changeFrequency: "daily" as const,
+      priority: 0.9,
+    },
+    ...categoryUrls,
     ...staticPages.map((page) => ({
       url: absoluteUrl(page.href),
       lastModified: new Date("2026-10-13"),

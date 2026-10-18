@@ -10,6 +10,9 @@ import {
   siteDescription,
   siteShortDescription,
   siteKeywords,
+  siteName,
+  siteAlternateNames,
+  blogName,
 } from "@/lib/site";
 
 const geistSans = Geist({
@@ -38,7 +41,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: siteTitle,
-    template: "%s | Kali Zubaan",
+    template: "%s | Kali Zubaan Blog",
   },
   description: siteDescription,
   keywords: siteKeywords,
@@ -92,21 +95,36 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // One WebSite + one Organization for the whole site. alternateName tells
+  // Google the brand searches ("kalizubaan blogs") belong to this site.
+  // No SearchAction: the homepage search filters in the browser, there is no
+  // search-results URL for Google to send people to.
+  // sameAs (social profiles) is left out until there are profiles to list.
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Kali Zubaan",
-    url: siteUrl,
-    description: siteDescription,
-    publisher: {
-      "@type": "Organization",
-      name: "Kali Zubaan",
-      url: siteUrl,
-      logo: {
-        "@type": "ImageObject",
-        url: `${siteUrl}/logo.png`,
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        name: siteName,
+        alternateName: siteAlternateNames,
+        url: siteUrl,
+        description: siteDescription,
+        inLanguage: "en-IN",
+        publisher: { "@id": `${siteUrl}/#organization` },
       },
-    },
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        name: siteName,
+        alternateName: blogName,
+        url: siteUrl,
+        logo: {
+          "@type": "ImageObject",
+          url: `${siteUrl}/logo.png`,
+        },
+      },
+    ],
   };
 
   return (
