@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!post) {
     return {
-      title: "Article Not Found | Kali Zubaan",
+      title: "Article Not Found",
       description: "The requested article could not be found.",
     };
   }
@@ -145,7 +145,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Navigation & Category */}
           <div className="flex items-center justify-between gap-4 mb-8">
             <Link
-              href="/"
+              href="/blog"
               className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back to Articles
