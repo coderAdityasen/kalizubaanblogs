@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Clock, Calendar, ArrowUpRight } from "lucide-react";
 import { BlogPostSummary } from "@/types/blog";
+import SmartImage from "@/components/SmartImage";
 
 interface PostCardProps {
   post: BlogPostSummary;
@@ -20,14 +21,14 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
         {/* Featured Image */}
         <div className="lg:col-span-7 relative h-64 sm:h-80 lg:h-auto min-h-[300px] overflow-hidden bg-zinc-100 dark:bg-zinc-800">
           {post.cover_image ? (
-            <img
+            <SmartImage
               src={post.cover_image}
               alt={post.title}
               width={1200}
               height={675}
+              sizes="(min-width: 1024px) 680px, 100vw"
               loading="eager"
               fetchPriority="high"
-              decoding="async"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
@@ -87,13 +88,12 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
           <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
             <div className="flex items-center gap-3">
               {post.author_avatar ? (
-                <img
+                <SmartImage
                   src={post.author_avatar}
                   alt={post.author_name}
                   width={36}
                   height={36}
                   loading="lazy"
-                  decoding="async"
                   className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/20"
                 />
               ) : (
@@ -128,13 +128,13 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
         {/* Card Cover Image */}
         <div className="relative h-48 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
           {post.cover_image ? (
-            <img
+            <SmartImage
               src={post.cover_image}
               alt={post.title}
               width={640}
               height={360}
+              sizes="(min-width: 1024px) 370px, (min-width: 768px) 50vw, 100vw"
               loading="lazy"
-              decoding="async"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
@@ -191,13 +191,12 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
       <div className="p-5 pt-0 mt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {post.author_avatar ? (
-            <img
+            <SmartImage
               src={post.author_avatar}
               alt={post.author_name}
               width={28}
               height={28}
               loading="lazy"
-              decoding="async"
               className="w-7 h-7 rounded-full object-cover"
             />
           ) : (

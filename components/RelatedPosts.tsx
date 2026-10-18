@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Clock } from "lucide-react";
 import type { BlogPostSummary } from "@/types/blog";
+import SmartImage from "@/components/SmartImage";
 
 interface RelatedPostsProps {
   posts: BlogPostSummary[];
@@ -30,13 +31,13 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
             >
               <div className="w-28 sm:w-full shrink-0 aspect-square sm:aspect-video bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                 {post.cover_image ? (
-                  <img
+                  <SmartImage
                     src={post.cover_image}
                     alt=""
                     width={480}
                     height={270}
+                    sizes="(min-width: 640px) 240px, 112px"
                     loading="lazy"
-                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : null}
