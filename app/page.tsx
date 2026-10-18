@@ -30,13 +30,13 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl">
             <span className="text-xs font-semibold tracking-wider uppercase text-rose-600 dark:text-rose-400 mb-2 block font-mono">
-              The Unfiltered Tech Journal
+              Money · Health · Side Hustles · Tech
             </span>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-zinc-900 dark:text-white leading-[1.12]">
               Kali Zubaan.
             </h1>
             <p className="mt-3 sm:mt-4 text-base sm:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-              Bold perspectives, distributed systems, autonomous agents, and raw software engineering craft. No fluff.
+              Plain-spoken breakdowns of personal finance and tax, health research, real side-hustle income stories, and tech news, with the numbers checked. No fluff.
             </p>
           </div>
         </div>

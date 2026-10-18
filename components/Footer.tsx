@@ -13,7 +13,7 @@ export default function Footer() {
               Kali Zubaan
             </span>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Bold, unfiltered perspectives on technology, systems, and craft.
+              Unfiltered takes on money, health, side hustles and tech.
             </p>
           </div>
 
