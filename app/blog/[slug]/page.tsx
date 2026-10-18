@@ -7,6 +7,7 @@ import MarkdownContent from "@/components/MarkdownContent";
 import ShareBar from "@/components/ShareBar";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getRelatedPosts } from "@/lib/related";
+import SmartImage from "@/components/SmartImage";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
@@ -171,12 +172,12 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="mt-8 py-5 border-y border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               {post.author_avatar ? (
-                <img
+                <SmartImage
                   src={post.author_avatar}
                   alt={post.author_name}
                   width={40}
                   height={40}
-                  decoding="async"
+                  loading="lazy"
                   className="w-10 h-10 rounded-full object-cover ring-2 ring-rose-500/20"
                 />
               ) : (
@@ -206,14 +207,14 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Cover Image */}
           {post.cover_image && (
             <div className="mt-8 rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg bg-zinc-100 dark:bg-zinc-800 aspect-video relative">
-              <img
+              <SmartImage
                 src={post.cover_image}
                 alt={post.title}
                 width={1200}
                 height={675}
+                sizes="(min-width: 768px) 720px, 100vw"
                 loading="eager"
                 fetchPriority="high"
-                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>

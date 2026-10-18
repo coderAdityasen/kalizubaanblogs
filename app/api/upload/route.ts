@@ -150,6 +150,8 @@ export async function POST(req: NextRequest) {
         .from(bucketName)
         .upload(storagePath, buffer, {
           contentType: imageFile.type || "image/png",
+          // File names are unique per upload, so browsers/CDNs can keep them for a year.
+          cacheControl: "31536000",
           upsert: true,
         });
 
