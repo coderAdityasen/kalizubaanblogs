@@ -1,15 +1,21 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Filter, Sparkles, BookOpen } from "lucide-react";
+import Link from "next/link";
+import { Search, Filter, Sparkles, BookOpen, ArrowRight } from "lucide-react";
 import { BlogPostSummary } from "@/types/blog";
 import PostCard from "./PostCard";
 
 interface BlogListProps {
+  /** The latest posts (the homepage doesn't load the whole archive). */
   initialPosts: BlogPostSummary[];
+  /** Total published posts, so readers can be pointed at the full archive. */
+  totalPosts?: number;
 }
 
-export default function BlogList({ initialPosts }: BlogListProps) {
+export default function BlogList({ initialPosts, totalPosts = initialPosts.length }: BlogListProps) {
+  const hasMore = totalPosts > initialPosts.length;
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
@@ -53,7 +59,7 @@ export default function BlogList({ initialPosts }: BlogListProps) {
           <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search articles by title, tag, or topic..."
+            placeholder={hasMore ? "Search latest articles by title, tag, or topic..." : "Search articles by title, tag, or topic..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 text-sm bg-white dark:bg-zinc-800 rounded-xl border border-transparent dark:border-zinc-700/60 text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
@@ -95,6 +101,14 @@ export default function BlogList({ initialPosts }: BlogListProps) {
           >
             Clear Filters
           </button>
+          {hasMore && (
+            <p className="mt-4 text-sm text-zinc-500">
+              Only the latest {initialPosts.length} articles are searched here.{" "}
+              <Link href="/blog" className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                Browse all {totalPosts} articles
+              </Link>
+            </p>
+          )}
         </div>
       ) : (
         <>
@@ -123,6 +137,18 @@ export default function BlogList({ initialPosts }: BlogListProps) {
                   <PostCard key={post.id || post.slug} post={post} />
                 ))}
               </div>
+            </div>
+          )}
+
+          {hasMore && (
+            <div className="flex justify-center">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold shadow-sm hover:bg-indigo-700 transition-colors"
+              >
+                Browse all {totalPosts} articles
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
             </div>
           )}
         </>

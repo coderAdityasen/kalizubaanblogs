@@ -2,11 +2,15 @@ import Link from "next/link";
 import type { BlogPostSummary } from "@/types/blog";
 import type { BlogCategory } from "@/lib/blog-index";
 import PostCard from "@/components/PostCard";
+import Pagination from "@/components/Pagination";
+import { POSTS_PER_PAGE, type PageInfo } from "@/lib/pagination";
 
 interface BlogIndexProps {
   title: string;
   intro: string;
+  /** Only the posts for the current page. */
   posts: BlogPostSummary[];
+  pageInfo: PageInfo;
   categories: BlogCategory[];
   /** Slug of the category being shown; undefined on /blog. */
   activeCategory?: string;
@@ -17,7 +21,10 @@ interface BlogIndexProps {
  * homepage BlogList, the filters here are real links, so every category has its
  * own crawlable URL.
  */
-export default function BlogIndex({ title, intro, posts, categories, activeCategory }: BlogIndexProps) {
+export default function BlogIndex({ title, intro, posts, pageInfo, categories, activeCategory }: BlogIndexProps) {
+  const first = (pageInfo.page - 1) * POSTS_PER_PAGE + 1;
+  const last = first + posts.length - 1;
+
   const pill = (active: boolean) =>
     `px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
       active
@@ -72,13 +79,16 @@ export default function BlogIndex({ title, intro, posts, categories, activeCateg
         ) : (
           <>
             <p className="mb-6 text-xs font-medium text-zinc-400">
-              Showing {posts.length} {posts.length === 1 ? "article" : "articles"}, newest first
+              {pageInfo.totalPages > 1
+                ? `Showing ${first}–${last} of ${pageInfo.totalItems} articles, newest first (page ${pageInfo.page} of ${pageInfo.totalPages})`
+                : `Showing ${posts.length} ${posts.length === 1 ? "article" : "articles"}, newest first`}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
                 <PostCard key={post.id || post.slug} post={post} />
               ))}
             </div>
+            <Pagination {...pageInfo} />
           </>
         )}
       </main>
