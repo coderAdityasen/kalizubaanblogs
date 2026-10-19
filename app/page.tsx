@@ -2,6 +2,7 @@ import { getPosts, checkSupabaseStatus } from "@/lib/supabase";
 import BlogList from "@/components/BlogList";
 import AdminSetupBanner from "@/components/AdminSetupBanner";
 import Newsletter from "@/components/Newsletter";
+import { HOMEPAGE_POST_COUNT } from "@/lib/pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,9 @@ export default async function HomePage() {
 
   // BlogList is a client component, so everything passed to it is serialised
   // into the page HTML. Cards only need title, excerpt, cover and meta, so drop
-  // the full Markdown body of every post to keep the homepage light.
-  const postSummaries = posts.map((post) => {
+  // the full Markdown body, and only send the latest posts: the full archive
+  // is paginated at /blog, so the homepage stays the same size as posts pile up.
+  const postSummaries = posts.slice(0, HOMEPAGE_POST_COUNT).map((post) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { content, ...summary } = post;
     return summary;
@@ -44,7 +46,7 @@ export default async function HomePage() {
 
       {/* Main Content Area */}
       <main id="latest" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full flex-1">
-        <BlogList initialPosts={postSummaries} />
+        <BlogList initialPosts={postSummaries} totalPosts={posts.length} />
 
         {/* Reader Newsletter Subscription */}
         <Newsletter />
