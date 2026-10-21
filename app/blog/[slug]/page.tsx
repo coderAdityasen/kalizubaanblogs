@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 import { getPostBySlug, getPosts } from "@/lib/supabase";
 import MarkdownContent from "@/components/MarkdownContent";
 import ShareBar from "@/components/ShareBar";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getRelatedPosts } from "@/lib/related";
 import SmartImage from "@/components/SmartImage";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { categorySlug } from "@/lib/blog-index";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
@@ -142,18 +144,19 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       <article className="min-h-screen py-10 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          {/* Navigation & Category */}
-          <div className="flex items-center justify-between gap-4 mb-8">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" /> Back to Articles
-            </Link>
-
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
-              {post.category}
-            </span>
+          {/* Breadcrumbs (also emitted as BreadcrumbList structured data) */}
+          <div className="mb-8">
+            <Breadcrumbs
+              siteUrl={siteUrl}
+              items={[
+                { name: "Home", href: "/" },
+                { name: "Blog", href: "/blog" },
+                ...(post.category
+                  ? [{ name: post.category, href: `/blog/category/${categorySlug(post.category)}` }]
+                  : []),
+                { name: post.title },
+              ]}
+            />
           </div>
 
           {/* Post Title */}
@@ -254,7 +257,14 @@ export default async function BlogPostPage({ params }: PageProps) {
                 Thanks for reading Kali Zubaan
               </h3>
               <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                Explore more articles in <span className="font-semibold text-zinc-700 dark:text-zinc-300">{post.category}</span> or return to the main publication feed.
+                Explore more articles in{" "}
+                <Link
+                  href={`/blog/category/${categorySlug(post.category)}`}
+                  className="font-semibold text-zinc-700 dark:text-zinc-300 underline decoration-rose-500/40 underline-offset-2 hover:text-rose-500 dark:hover:text-rose-400"
+                >
+                  {post.category}
+                </Link>{" "}
+                or return to the main publication feed.
               </p>
             </div>
             <Link
