@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createOrUpdatePost, getPosts, isSupabaseConfigured } from "@/lib/supabase";
 import { CreatePostInput } from "@/types/blog";
 
@@ -152,6 +153,18 @@ export async function POST(req: NextRequest) {
       reading_time: postInput.reading_time,
       published: postInput.published,
     });
+
+    // Refresh cached pages right away so the new/updated post shows up on the
+    // article page, homepage, blog and category listings and the sitemap
+    // without waiting for the next deploy or the ISR window.
+    try {
+      revalidatePath(`/blog/${post.slug}`);
+      revalidatePath("/");
+      revalidatePath("/blog", "layout");
+      revalidatePath("/sitemap.xml");
+    } catch (revalidateError) {
+      console.error("Failed to revalidate cached pages after publish", revalidateError);
+    }
 
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = host.includes("localhost") ? "http" : "https";

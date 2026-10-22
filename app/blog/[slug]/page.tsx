@@ -15,6 +15,14 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+/**
+ * Re-render each article at most once an hour (ISR). Without this, article
+ * pages are built once per deploy and served from cache forever, so edits to
+ * a post, its "Keep reading" links and dateModified never reach readers or
+ * Google until the next deploy. The publish API also revalidates on demand.
+ */
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   const posts = await getPosts();
   return posts.map((post) => ({
