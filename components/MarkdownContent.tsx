@@ -4,6 +4,14 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
+import SmartImage from "@/components/SmartImage";
+
+// Default intrinsic size for images inside article bodies (the editor uploads
+// 1600x900 images). Used to reserve the right aspect ratio while loading.
+const INLINE_IMAGE_WIDTH = 1600;
+const INLINE_IMAGE_HEIGHT = 900;
+// The article column is at most ~720px wide on desktop and full-width on phones.
+const INLINE_IMAGE_SIZES = "(min-width: 768px) 720px, 100vw";
 
 interface MarkdownContentProps {
   content: string;
@@ -128,22 +136,32 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
               {children}
             </a>
           ),
-          img: ({ src, alt }) => (
-            <span className="block my-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-md">
-              <img
-                src={src}
-                alt={alt || "Blog image"}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-auto object-cover"
-              />
-              {alt && (
-                <span className="block p-2 text-center text-xs text-zinc-500 bg-zinc-50 dark:bg-zinc-900/50">
-                  {alt}
-                </span>
-              )}
-            </span>
-          ),
+          img: ({ src, alt }) => {
+            const imageSrc = typeof src === "string" ? src : "";
+            const altText = alt || "Blog image";
+            return (
+              <span className="block my-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-md">
+                {/* Article images are uploaded at 1600x900 (16:9). Passing the
+                    size reserves space before the image loads (no layout
+                    shift), and SmartImage serves a resized AVIF/WebP for
+                    Supabase/Unsplash images instead of the full-size JPEG. */}
+                <SmartImage
+                  src={imageSrc}
+                  alt={altText}
+                  width={INLINE_IMAGE_WIDTH}
+                  height={INLINE_IMAGE_HEIGHT}
+                  sizes={INLINE_IMAGE_SIZES}
+                  loading="lazy"
+                  className="w-full h-auto object-cover"
+                />
+                {alt && (
+                  <span className="block p-2 text-center text-xs text-zinc-500 bg-zinc-50 dark:bg-zinc-900/50">
+                    {alt}
+                  </span>
+                )}
+              </span>
+            );
+          },
           table: ({ children }) => (
             <div className="my-6 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
               <table className="w-full text-left text-sm border-collapse">
