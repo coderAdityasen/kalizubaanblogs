@@ -4,7 +4,11 @@ import AdminSetupBanner from "@/components/AdminSetupBanner";
 import Newsletter from "@/components/Newsletter";
 import { HOMEPAGE_POST_COUNT } from "@/lib/pagination";
 
-export const dynamic = "force-dynamic";
+// ISR, same as /blog: serve the homepage from the CDN cache and rebuild it in
+// the background at most every 10 minutes. It used to be force-dynamic, so
+// every visit (and every Googlebot crawl) waited on a fresh render plus two
+// Supabase queries before the first byte (0.7-2 s TTFB vs ~50 ms for /blog).
+export const revalidate = 600;
 
 export default async function HomePage() {
   const [posts, supabaseStatus] = await Promise.all([

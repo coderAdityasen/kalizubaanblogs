@@ -3,7 +3,9 @@ import { getPosts } from "@/lib/supabase";
 import { absoluteUrl, staticPages } from "@/lib/site";
 import { getCategories } from "@/lib/blog-index";
 
-export const dynamic = "force-dynamic";
+// Cached like the pages it lists: regenerated at most every 10 minutes instead
+// of querying Supabase on every crawler hit.
+export const revalidate = 600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
@@ -32,8 +34,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
+      // The homepage only changes when a post does, so report that date rather
+      // than "now" (a lastmod that always moves gets ignored by Google).
       url: siteUrl,
-      lastModified: new Date(),
+      lastModified: latestPostDate,
       changeFrequency: "daily" as const,
       priority: 1.0,
     },
