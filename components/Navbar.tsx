@@ -10,7 +10,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Brand Logo - Kali Zubaan */}
-        <Link href="/" aria-label="Kali Zubaan Blog" className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-3 group">
           <div aria-hidden="true" className="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-serif font-black text-sm shadow-sm group-hover:scale-105 transition-transform">
             KZ
           </div>

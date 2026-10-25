@@ -35,7 +35,7 @@ export default function ShareBar({ title }: ShareBarProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-zinc-400 font-medium mr-1 flex items-center gap-1">
+      <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mr-1 flex items-center gap-1">
         <Share2 className="w-3.5 h-3.5" /> Share:
       </span>
 

@@ -127,7 +127,7 @@ export default function BlogList({ initialPosts, totalPosts = initialPosts.lengt
                   <Sparkles className="w-4 h-4 text-indigo-500" />
                   Latest Articles
                 </h3>
-                <span className="text-xs font-medium text-zinc-400">
+                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                   Showing {filteredPosts.length} {filteredPosts.length === 1 ? "post" : "posts"}
                 </span>
               </div>
