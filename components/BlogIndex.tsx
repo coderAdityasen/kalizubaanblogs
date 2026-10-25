@@ -78,7 +78,7 @@ export default function BlogIndex({ title, intro, posts, pageInfo, categories, a
           <p className="py-16 text-center text-sm text-zinc-500">No articles here yet.</p>
         ) : (
           <>
-            <p className="mb-6 text-xs font-medium text-zinc-400">
+            <p className="mb-6 text-xs font-medium text-zinc-500 dark:text-zinc-400">
               {pageInfo.totalPages > 1
                 ? `Showing ${first}–${last} of ${pageInfo.totalItems} articles, newest first (page ${pageInfo.page} of ${pageInfo.totalPages})`
                 : `Showing ${posts.length} ${posts.length === 1 ? "article" : "articles"}, newest first`}

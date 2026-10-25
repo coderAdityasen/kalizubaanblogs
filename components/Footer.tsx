@@ -41,7 +41,7 @@ export default function Footer() {
           ))}
         </nav>
 
-        <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-400 dark:text-zinc-500">
+        <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-500 dark:text-zinc-400">
           <span>© 2026 Kali Zubaan. All rights reserved.</span>
           <span>Designed for readers. Built with Next.js &amp; Supabase.</span>
         </div>

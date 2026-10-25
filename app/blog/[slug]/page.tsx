@@ -239,9 +239,9 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (
             <div className="mt-12 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
                 Tagged Topics
-              </h4>
+              </h2>
               <div className="flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
                   <span
@@ -264,7 +264,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <h3 className="font-serif font-bold text-lg text-zinc-900 dark:text-white">
                 Thanks for reading Kali Zubaan
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                 Explore more articles in{" "}
                 <Link
                   href={`/blog/category/${categorySlug(post.category)}`}
