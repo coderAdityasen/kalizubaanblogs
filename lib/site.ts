@@ -3,6 +3,13 @@ export const siteUrl =
 
 export const siteName = "Kali Zubaan";
 
+/** Public contact address shown on the Contact page. */
+export const contactEmail = "developer.adityasen@gmail.com";
+
+/** The blog's author, used for the byline link and BlogPosting structured data. */
+export const authorName = "Aditya Sen";
+export const authorPagePath = "/about";
+
 /**
  * The brand people search for ("kalizubaan blogs", "kali zubaan blog"). Used in
  * the title template, the homepage h1 and the WebSite structured data.

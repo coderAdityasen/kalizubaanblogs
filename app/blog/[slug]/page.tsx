@@ -10,6 +10,7 @@ import { getRelatedPosts } from "@/lib/related";
 import SmartImage from "@/components/SmartImage";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { categorySlug } from "@/lib/blog-index";
+import { absoluteUrl, authorName, authorPagePath } from "@/lib/site";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
@@ -111,6 +112,10 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const articleUrl = `${siteUrl}/blog/${post.slug}`;
 
+  // Posts by the site's own author link to the About page, which carries the
+  // author bio. Google uses author.url to tell who wrote the article.
+  const isSiteAuthor = !post.author_name || [authorName, "Aditya"].includes(post.author_name);
+
   // Google Rich Snippets / Structured Data (Schema.org BlogPosting)
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -123,6 +128,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     author: {
       "@type": "Person",
       name: post.author_name || "Aditya",
+      ...(isSiteAuthor ? { url: absoluteUrl(authorPagePath) } : {}),
     },
     publisher: {
       "@type": "Organization",
@@ -198,7 +204,13 @@ export default async function BlogPostPage({ params }: PageProps) {
               )}
               <div>
                 <p className="text-sm font-semibold text-zinc-900 dark:text-white">
-                  {post.author_name}
+                  {isSiteAuthor ? (
+                    <Link href={authorPagePath} rel="author" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+                      {post.author_name}
+                    </Link>
+                  ) : (
+                    post.author_name
+                  )}
                 </p>
                 <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
                   <span className="flex items-center gap-1">
