@@ -21,24 +21,38 @@ export default function AboutPage() {
     >
       <h2>Who writes this blog</h2>
       <p>
-        Hi, I&apos;m Aditya Sen. [EDIT: Add your real bio here: where you are based, what you do,
-        your background or experience, and why you started this blog. 3 to 5 sentences.]
+        Hi, I&apos;m Aditya Sen, a software developer based in Indore, India. I build web
+        applications with JavaScript, Node.js and the MERN stack, and I work with AI tools every
+        day. I started Kali Zubaan to write the kind of explainers I wanted to read myself: plain
+        answers to everyday money, health, side-hustle and tech questions, with the numbers
+        checked against their sources.
       </p>
 
       <h2>What we cover</h2>
       <ul>
-        <li><strong>Personal finance:</strong> saving, budgeting, investing basics and money habits.</li>
-        <li><strong>Health &amp; wellness:</strong> everyday health, fitness and lifestyle topics.</li>
-        <li><strong>Technology:</strong> software, AI and tools that make life and work easier.</li>
-        <li>[EDIT: Add or remove topics so this list matches what you actually write about.]</li>
+        <li>
+          <Link href="/blog/category/personal-finance"><strong>Personal finance</strong></Link>:
+          SIPs and mutual funds, IPOs, tax deadlines, UPI and banking rules.
+        </li>
+        <li>
+          <Link href="/blog/category/tech-ai"><strong>Tech &amp; AI</strong></Link>: AI model
+          launches, phones and the security news that affects Indian users.
+        </li>
+        <li>
+          <Link href="/blog/category/health-fitness"><strong>Health &amp; fitness</strong></Link>:
+          weight loss, nutrition and what the research actually says.
+        </li>
+        <li>
+          <Link href="/blog/category/side-hustles"><strong>Side hustles</strong></Link>: real
+          income stories, gig apps and the online-earning scams to avoid.
+        </li>
       </ul>
 
       <h2>Why &ldquo;Kali Zubaan&rdquo;?</h2>
       <p>
         In Hindi, <em>kali zubaan</em> (&ldquo;black tongue&rdquo;) is said of someone whose words
         have a way of coming true, the person who says the blunt thing nobody else will. That is
-        the spirit of this blog: straight talk, no sugar-coating. [EDIT: Adjust this to your own
-        reason for choosing the name, if different.]
+        the spirit of this blog: straight talk, no sugar-coating.
       </p>
 
       <h2>Our approach</h2>

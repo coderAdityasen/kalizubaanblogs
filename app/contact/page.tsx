@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import StaticPage from "@/components/StaticPage";
-import { absoluteUrl } from "@/lib/site";
-
-// [EDIT: your-email@example.com] Replace with the email address you want shown publicly.
-const contactEmail = "your-email@example.com";
+import { absoluteUrl, contactEmail } from "@/lib/site";
 
 const description = "Contact Kali Zubaan for questions, feedback, corrections or collaboration requests.";
 
@@ -23,7 +20,6 @@ export default function ContactPage() {
       <p className="text-lg font-semibold">
         <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
       </p>
-      <p className="text-sm text-zinc-500">[EDIT: your-email@example.com, replace with your real email in app/contact/page.tsx]</p>
       <p>We usually reply within a few working days.</p>
       <h2>Corrections</h2>
       <p>
