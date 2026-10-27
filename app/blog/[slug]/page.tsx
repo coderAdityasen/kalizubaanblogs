@@ -8,6 +8,7 @@ import ShareBar from "@/components/ShareBar";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getRelatedPosts } from "@/lib/related";
 import SmartImage from "@/components/SmartImage";
+import AuthorAvatar from "@/components/AuthorAvatar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { categorySlug } from "@/lib/blog-index";
 import { absoluteUrl, authorName, authorPagePath } from "@/lib/site";
@@ -188,20 +189,13 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Author & Metadata Row */}
           <div className="mt-8 py-5 border-y border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              {post.author_avatar ? (
-                <SmartImage
-                  src={post.author_avatar}
-                  alt={post.author_name}
-                  width={40}
-                  height={40}
-                  loading="lazy"
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-rose-500/20"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 flex items-center justify-center font-bold text-sm">
-                  {post.author_name[0]}
-                </div>
-              )}
+              <AuthorAvatar
+                name={post.author_name}
+                avatar={post.author_avatar}
+                size={40}
+                className="w-10 h-10 rounded-full ring-2 ring-rose-500/20 bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300"
+                textClassName="text-sm"
+              />
               <div>
                 <p className="text-sm font-semibold text-zinc-900 dark:text-white">
                   {isSiteAuthor ? (

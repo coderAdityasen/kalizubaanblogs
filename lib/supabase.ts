@@ -186,7 +186,8 @@ export async function createOrUpdatePost(input: CreatePostInput): Promise<{
     category: input.category || "General",
     tags: Array.isArray(input.tags) ? input.tags : ["General"],
     author_name: input.author_name || "Admin",
-    author_avatar: input.author_avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80",
+    // No stock-photo default: a byline without a real photo shows initials.
+    author_avatar: input.author_avatar || undefined,
     reading_time,
     published: input.published ?? true,
     updated_at: now,
