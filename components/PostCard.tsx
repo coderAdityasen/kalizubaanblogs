@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Clock, Calendar, ArrowUpRight } from "lucide-react";
 import { BlogPostSummary } from "@/types/blog";
 import SmartImage from "@/components/SmartImage";
+import AuthorAvatar from "@/components/AuthorAvatar";
 
 interface PostCardProps {
   post: BlogPostSummary;
@@ -87,20 +88,13 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
           {/* Author and Read More */}
           <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {post.author_avatar ? (
-                <SmartImage
-                  src={post.author_avatar}
-                  alt={post.author_name}
-                  width={36}
-                  height={36}
-                  loading="lazy"
-                  className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/20"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 flex items-center justify-center font-bold text-xs">
-                  {post.author_name[0]}
-                </div>
-              )}
+              <AuthorAvatar
+                name={post.author_name}
+                avatar={post.author_avatar}
+                size={36}
+                className="w-9 h-9 rounded-full ring-2 ring-indigo-500/20 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300"
+                textClassName="text-xs"
+              />
               <div>
                 <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
                   {post.author_name}
@@ -190,20 +184,13 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
       {/* Author and footer */}
       <div className="p-5 pt-0 mt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          {post.author_avatar ? (
-            <SmartImage
-              src={post.author_avatar}
-              alt={post.author_name}
-              width={28}
-              height={28}
-              loading="lazy"
-              className="w-7 h-7 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 flex items-center justify-center font-bold text-[10px]">
-              {post.author_name[0]}
-            </div>
-          )}
+          <AuthorAvatar
+            name={post.author_name}
+            avatar={post.author_avatar}
+            size={28}
+            className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300"
+            textClassName="text-[10px]"
+          />
           <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
             {post.author_name}
           </span>
