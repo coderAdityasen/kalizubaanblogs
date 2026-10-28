@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getPosts, checkSupabaseStatus } from "@/lib/supabase";
 import BlogList from "@/components/BlogList";
 import AdminSetupBanner from "@/components/AdminSetupBanner";
@@ -9,6 +10,12 @@ import { HOMEPAGE_POST_COUNT } from "@/lib/pagination";
 // every visit (and every Googlebot crawl) waited on a fresh render plus two
 // Supabase queries before the first byte (0.7-2 s TTFB vs ~50 ms for /blog).
 export const revalidate = 600;
+
+// The homepage's canonical lives here rather than in the root layout, so pages
+// without their own (the 404 page) don't point Google at the homepage.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function HomePage() {
   const [posts, supabaseStatus] = await Promise.all([
