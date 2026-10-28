@@ -259,3 +259,55 @@ export async function createOrUpdatePost(input: CreatePostInput): Promise<{
     return { post: created, storage: "local_memory" };
   }
 }
+
+/** Fields PATCH /api/posts/[slug] may change. Everything else (slug, author, dates) is left alone. */
+export const EDITABLE_POST_FIELDS = ["title", "content", "excerpt", "tags", "cover_image", "category"] as const;
+export type EditablePostField = (typeof EDITABLE_POST_FIELDS)[number];
+export type UpdatePostInput = Partial<Pick<BlogPost, EditablePostField>>;
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Partially update an existing post, found by slug or by id (uuid).
+ * Only the fields in `changes` are written; updated_at is always set to now and
+ * reading_time is recalculated when the content changes. Returns null when no
+ * post matches. Never creates a post.
+ */
+export async function updatePost(
+  slugOrId: string,
+  changes: UpdatePostInput
+): Promise<{ post: BlogPost; storage: "supabase" | "local_memory" } | null> {
+  const now = new Date().toISOString();
+  const patch: Partial<BlogPost> = { ...changes, updated_at: now };
+  if (typeof changes.content === "string") {
+    patch.reading_time = calculateReadingTime(changes.content);
+  }
+
+  const adminSupabase = getAdminSupabaseClient();
+  if (adminSupabase) {
+    const column = UUID_RE.test(slugOrId) ? "id" : "slug";
+    const { data: existing, error: findError } = await adminSupabase
+      .from("posts")
+      .select("id")
+      .eq(column, slugOrId)
+      .maybeSingle();
+    if (findError) throw findError;
+    if (!existing) return null;
+
+    const { data, error } = await adminSupabase
+      .from("posts")
+      .update(patch)
+      .eq("id", existing.id)
+      .select()
+      .single();
+    if (error) throw error;
+    return { post: data as BlogPost, storage: "supabase" };
+  }
+
+  // Local memory store (dev without Supabase)
+  const posts = getLocalStore();
+  const idx = posts.findIndex((p) => p.slug === slugOrId || p.id === slugOrId);
+  if (idx < 0) return null;
+  posts[idx] = { ...posts[idx], ...patch };
+  return { post: posts[idx], storage: "local_memory" };
+}

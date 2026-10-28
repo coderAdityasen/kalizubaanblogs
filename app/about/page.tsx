@@ -25,7 +25,8 @@ export default function AboutPage() {
         applications with JavaScript, Node.js and the MERN stack, and I work with AI tools every
         day. I started Kali Zubaan to write the kind of explainers I wanted to read myself: plain
         answers to everyday money, health, side-hustle and tech questions, with the numbers
-        checked against their sources.
+        checked against their sources. More on how articles are checked is on my{" "}
+        <Link href="/author/aditya-sen">author page</Link>.
       </p>
 
       <h2>What we cover</h2>

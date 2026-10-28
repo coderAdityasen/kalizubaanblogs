@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, History } from "lucide-react";
 import { getPostBySlug, getPosts } from "@/lib/supabase";
 import MarkdownContent from "@/components/MarkdownContent";
 import ShareBar from "@/components/ShareBar";
@@ -12,6 +12,8 @@ import AuthorAvatar from "@/components/AuthorAvatar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { categorySlug } from "@/lib/blog-index";
 import { absoluteUrl, authorName, authorPagePath } from "@/lib/site";
+import { faqJsonLd } from "@/lib/faq";
+import { getHubForPost } from "@/lib/hubs";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
@@ -105,15 +107,23 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
 
-  const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  // Dates are shown in India time so a post published late at night IST doesn't
+  // show the previous day (the server renders in UTC).
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "Asia/Kolkata",
+    });
+  const formattedDate = formatDate(post.created_at);
+  const modifiedAt = post.updated_at || post.created_at;
+  const formattedUpdated = formatDate(modifiedAt);
+  const hub = getHubForPost(post.slug);
 
   const articleUrl = `${siteUrl}/blog/${post.slug}`;
 
-  // Posts by the site's own author link to the About page, which carries the
+  // Posts by the site's own author link to the author page, which carries the
   // author bio. Google uses author.url to tell who wrote the article.
   const isSiteAuthor = !post.author_name || [authorName, "Aditya"].includes(post.author_name);
 
@@ -125,11 +135,13 @@ export default async function BlogPostPage({ params }: PageProps) {
     description: post.excerpt,
     image: post.cover_image ? [post.cover_image] : [`${siteUrl}/og-image.png`],
     datePublished: post.created_at,
-    dateModified: post.updated_at || post.created_at,
+    dateModified: modifiedAt,
     author: {
       "@type": "Person",
       name: post.author_name || "Aditya",
-      ...(isSiteAuthor ? { url: absoluteUrl(authorPagePath) } : {}),
+      ...(isSiteAuthor
+        ? { "@id": `${absoluteUrl(authorPagePath)}#person`, url: absoluteUrl(authorPagePath) }
+        : {}),
     },
     publisher: {
       "@type": "Organization",
@@ -149,6 +161,9 @@ export default async function BlogPostPage({ params }: PageProps) {
     timeRequired: `PT${post.reading_time || 3}M`,
   };
 
+  // FAQPage structured data, built from the "## FAQs" section of the post.
+  const faqLd = faqJsonLd(post.content, articleUrl);
+
   return (
     <>
       {/* Schema.org Article Structured Data for Google */}
@@ -156,6 +171,12 @@ export default async function BlogPostPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
 
       <article className="min-h-screen py-10 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
@@ -173,6 +194,15 @@ export default async function BlogPostPage({ params }: PageProps) {
               ]}
             />
           </div>
+
+          {/* Topic guide this post belongs to (pillar-cluster internal link) */}
+          {hub && (
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+              <Link href={`/blog/topics/${hub.slug}`} className="hover:underline underline-offset-2">
+                Part of our guide: {hub.name}
+              </Link>
+            </p>
+          )}
 
           {/* Post Title */}
           <h1 className="text-3xl sm:text-5xl font-serif font-black tracking-tight text-zinc-900 dark:text-white leading-[1.15]">
@@ -208,13 +238,18 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </p>
                 <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
                   <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" /> {formattedDate}
+                    <Calendar className="w-3 h-3" />{" "}
+                    <time dateTime={post.created_at}>{formattedDate}</time>
                   </span>
                   <span>•</span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" /> {post.reading_time} min read
                   </span>
                 </div>
+                <p className="mt-0.5 flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+                  <History className="w-3 h-3" /> Last updated{" "}
+                  <time dateTime={modifiedAt}>{formattedUpdated}</time>
+                </p>
               </div>
             </div>
 
