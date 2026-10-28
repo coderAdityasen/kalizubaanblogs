@@ -8,7 +8,7 @@ export const contactEmail = "developer.adityasen@gmail.com";
 
 /** The blog's author, used for the byline link and BlogPosting structured data. */
 export const authorName = "Aditya Sen";
-export const authorPagePath = "/about";
+export const authorPagePath = "/author/aditya-sen";
 
 /**
  * The brand people search for ("kalizubaan blogs", "kali zubaan blog"). Used in

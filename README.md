@@ -79,6 +79,31 @@ $body = Get-Content -Raw -Path "demo-post.json"
 Invoke-RestMethod -Uri "http://localhost:3000/api/posts" -Method Post -Headers $headers -Body $body
 ```
 
+### Editing an existing post: `PATCH /api/posts/<slug-or-id>`
+
+Same authentication as `POST` (`Authorization: Bearer <BLOG_API_SECRET>` or `x-api-key`).
+Send only the fields you want to change. Allowed fields: `title`, `content`, `excerpt`,
+`tags` (array of strings), `cover_image`, `category`. The slug, author and `created_at`
+never change, so the URL stays the same. `updated_at` is set to now, which the article
+shows as **Last updated** and sends to Google as `dateModified`. Unknown fields or an
+empty body return `400`; a slug or id that doesn't exist returns `404` (PATCH never
+creates a post).
+
+```bash
+curl -X PATCH https://www.kalizubaan.fun/api/posts/my-post-slug \
+  -H "Authorization: Bearer $BLOG_API_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"excerpt": "A sharper summary.", "tags": ["ipo", "ipo allotment"]}'
+```
+
+Unlike re-sending the post to `POST /api/posts` (which upserts by slug and resets any
+field you leave out, such as the excerpt, cover image and author), `PATCH` leaves
+untouched fields alone.
+
+Optional database migration: [`supabase/migrations/20261028_posts_updated_at.sql`](./supabase/migrations/20261028_posts_updated_at.sql)
+adds a trigger so `updated_at` also changes when a post is edited in the Supabase
+dashboard. Safe to re-run; run it once in the Supabase SQL Editor.
+
 ### Option D: Using the In-Browser Tester
 Open [http://localhost:3000/api-docs](http://localhost:3000/api-docs), enter your secret key, tweak the JSON if desired, and click **"Send POST Request"**.
 

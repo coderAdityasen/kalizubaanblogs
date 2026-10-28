@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
 import { getPosts } from "@/lib/supabase";
-import { absoluteUrl, staticPages } from "@/lib/site";
+import { absoluteUrl, authorPagePath, staticPages } from "@/lib/site";
 import { getCategories } from "@/lib/blog-index";
+import { TOPIC_HUBS } from "@/lib/hubs";
 
 // Cached like the pages it lists: regenerated at most every 10 minutes instead
 // of querying Supabase on every crawler hit.
@@ -48,6 +49,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     ...categoryUrls,
+    // Topic hubs (pillar-cluster pages), only when at least one of their posts is live.
+    ...TOPIC_HUBS.flatMap((hub) => {
+      const hubPosts = posts.filter(
+        (post) => post.slug === hub.pillarSlug || hub.postSlugs.includes(post.slug)
+      );
+      if (hubPosts.length === 0) return [];
+      const newest = hubPosts.reduce((a, b) =>
+        (a.updated_at || a.created_at) > (b.updated_at || b.created_at) ? a : b
+      );
+      return [
+        {
+          url: absoluteUrl(`/blog/topics/${hub.slug}`),
+          lastModified: new Date(newest.updated_at || newest.created_at),
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        },
+      ];
+    }),
+    {
+      url: absoluteUrl(authorPagePath),
+      lastModified: latestPostDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
     ...staticPages.map((page) => ({
       url: absoluteUrl(page.href),
       lastModified: new Date("2026-10-13"),

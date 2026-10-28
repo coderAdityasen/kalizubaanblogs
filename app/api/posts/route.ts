@@ -2,43 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createOrUpdatePost, getPosts, isSupabaseConfigured } from "@/lib/supabase";
 import { CreatePostInput } from "@/types/blog";
-
-/**
- * Validates request authorization using secret key.
- * Supports:
- * - Authorization: Bearer <BLOG_API_SECRET>
- * - x-api-key: <BLOG_API_SECRET>
- */
-function validateAuth(req: NextRequest): { authorized: boolean; reason?: string } {
-  const expectedSecret = process.env.BLOG_API_SECRET || "demo-secret-key-12345";
-
-  const authHeader = req.headers.get("authorization");
-  const apiKeyHeader = req.headers.get("x-api-key");
-
-  let providedSecret: string | null = null;
-
-  if (authHeader && authHeader.startsWith("Bearer ")) {
-    providedSecret = authHeader.substring(7).trim();
-  } else if (apiKeyHeader) {
-    providedSecret = apiKeyHeader.trim();
-  }
-
-  if (!providedSecret) {
-    return {
-      authorized: false,
-      reason: "Missing authentication. Provide 'Authorization: Bearer <secret>' or 'x-api-key: <secret>' header.",
-    };
-  }
-
-  if (providedSecret !== expectedSecret) {
-    return {
-      authorized: false,
-      reason: "Invalid API secret key. Please check your BLOG_API_SECRET.",
-    };
-  }
-
-  return { authorized: true };
-}
+import { validateAuth } from "@/lib/api-auth";
 
 /**
  * GET /api/posts
