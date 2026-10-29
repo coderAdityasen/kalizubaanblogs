@@ -17,7 +17,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex items-center gap-6 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
             <Link href="/" className="hover:text-zinc-950 dark:hover:text-white transition-colors">
               Home
             </Link>
@@ -30,6 +30,9 @@ export default function Footer() {
             <Link href="/#subscribe" className="hover:text-zinc-950 dark:hover:text-white transition-colors">
               Newsletter
             </Link>
+            <a href="/feed.xml" className="hover:text-zinc-950 dark:hover:text-white transition-colors">
+              RSS
+            </a>
           </div>
         </div>
 

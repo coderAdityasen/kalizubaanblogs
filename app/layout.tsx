@@ -130,6 +130,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <head>
+        {/* Lets feed readers and browsers discover the RSS feed from any page. */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${blogName} RSS feed`}
+          href="/feed.xml"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
