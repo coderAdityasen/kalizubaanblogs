@@ -132,6 +132,7 @@ export async function PATCH(
       revalidatePath("/");
       revalidatePath("/blog", "layout");
       revalidatePath("/sitemap.xml");
+      revalidatePath("/feed.xml");
     } catch (revalidateError) {
       console.error("Failed to revalidate cached pages after edit", revalidateError);
     }
