@@ -1,9 +1,9 @@
-"use client";
-
+// Server component: Markdown is parsed and rendered to HTML on the server, so
+// react-markdown/remark-gfm never ship to the browser. Only the code-block copy
+// button (CopyCodeButton) is a client component.
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useState } from "react";
-import { Copy, Check } from "lucide-react";
+import CopyCodeButton from "@/components/CopyCodeButton";
 import SmartImage from "@/components/SmartImage";
 
 // Default intrinsic size for images inside article bodies (the editor uploads
@@ -18,16 +18,7 @@ interface MarkdownContentProps {
 }
 
 function CodeBlock({ children, className }: { children: React.ReactNode; className?: string }) {
-  const [copied, setCopied] = useState(false);
   const codeText = String(children).replace(/\n$/, "");
-
-  const handleCopy = () => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(codeText);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   const isInline = !className && !String(children).includes("\n");
 
@@ -43,14 +34,7 @@ function CodeBlock({ children, className }: { children: React.ReactNode; classNa
     <div className="relative my-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-zinc-100 shadow-md">
       <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800 text-xs text-zinc-400 font-mono">
         <span>{className ? className.replace("language-", "") : "code"}</span>
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1.5 px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors text-[11px]"
-          title="Copy code"
-        >
-          {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-          {copied ? "Copied" : "Copy"}
-        </button>
+        <CopyCodeButton text={codeText} />
       </div>
       <pre className="p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed text-zinc-200">
         <code>{children}</code>
