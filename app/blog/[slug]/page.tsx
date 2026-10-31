@@ -223,7 +223,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 name={post.author_name}
                 avatar={post.author_avatar}
                 size={40}
-                className="w-10 h-10 rounded-full ring-2 ring-rose-500/20 bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300"
+                className="w-10 h-10 rounded-full ring-2 ring-rose-500/20 bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300"
                 textClassName="text-sm"
               />
               <div>
