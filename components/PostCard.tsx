@@ -92,7 +92,7 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
                 name={post.author_name}
                 avatar={post.author_avatar}
                 size={36}
-                className="w-9 h-9 rounded-full ring-2 ring-indigo-500/20 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300"
+                className="w-9 h-9 rounded-full ring-2 ring-indigo-500/20 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300"
                 textClassName="text-xs"
               />
               <div>
@@ -188,7 +188,7 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
             name={post.author_name}
             avatar={post.author_avatar}
             size={28}
-            className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300"
+            className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300"
             textClassName="text-[10px]"
           />
           <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">

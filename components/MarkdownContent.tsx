@@ -120,9 +120,16 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
               {children}
             </a>
           ),
-          img: ({ src, alt }) => {
+          img: ({ src, alt, title }) => {
             const imageSrc = typeof src === "string" ? src : "";
             const altText = alt || "Blog image";
+            // Markdown `![alt](src "caption")` gives an explicit caption; without
+            // one we show the alt text so readers still get a visible caption.
+            const caption = title || alt;
+            // When the caption repeats the alt text, hide the caption from
+            // screen readers so they don't hear the same sentence twice. The
+            // image keeps its alt (needed for accessibility and image search).
+            const captionDuplicatesAlt = !!caption && caption.trim() === (alt || "").trim();
             return (
               <span className="block my-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-md">
                 {/* Article images are uploaded at 1600x900 (16:9). Passing the
@@ -138,9 +145,12 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
                   loading="lazy"
                   className="w-full h-auto object-cover"
                 />
-                {alt && (
-                  <span className="block p-2 text-center text-xs text-zinc-500 bg-zinc-50 dark:bg-zinc-900/50">
-                    {alt}
+                {caption && (
+                  <span
+                    aria-hidden={captionDuplicatesAlt ? true : undefined}
+                    className="block p-2 text-center text-xs text-zinc-500 bg-zinc-50 dark:bg-zinc-900/50"
+                  >
+                    {caption}
                   </span>
                 )}
               </span>
