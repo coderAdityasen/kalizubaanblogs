@@ -109,8 +109,8 @@ export default async function TopicHubPage({ params }: PageProps) {
               More in {hub.name}
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {toSummaries(clusterPosts).map((post) => (
-                <PostCard key={post.slug} post={post} />
+              {toSummaries(clusterPosts).map((post, index) => (
+                <PostCard key={post.slug} post={post} priority={!pillar && index === 0} />
               ))}
             </div>
           </section>

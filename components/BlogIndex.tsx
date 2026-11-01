@@ -84,8 +84,8 @@ export default function BlogIndex({ title, intro, posts, pageInfo, categories, a
                 : `Showing ${posts.length} ${posts.length === 1 ? "article" : "articles"}, newest first`}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {posts.map((post) => (
-                <PostCard key={post.id || post.slug} post={post} />
+              {posts.map((post, index) => (
+                <PostCard key={post.id || post.slug} post={post} priority={index === 0} />
               ))}
             </div>
             <Pagination {...pageInfo} />
