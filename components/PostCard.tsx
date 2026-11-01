@@ -7,9 +7,15 @@ import AuthorAvatar from "@/components/AuthorAvatar";
 interface PostCardProps {
   post: BlogPostSummary;
   featured?: boolean;
+  /**
+   * Load this card's cover eagerly with high fetch priority. Set it on the
+   * first card of a listing so the above-the-fold image (usually the page's
+   * LCP element on mobile) isn't lazy-loaded.
+   */
+  priority?: boolean;
 }
 
-export default function PostCard({ post, featured = false }: PostCardProps) {
+export default function PostCard({ post, featured = false, priority = false }: PostCardProps) {
   const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -128,7 +134,8 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
               width={640}
               height={360}
               sizes="(min-width: 1024px) 370px, (min-width: 768px) 50vw, 100vw"
-              loading="lazy"
+              loading={priority ? "eager" : "lazy"}
+              fetchPriority={priority ? "high" : undefined}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
