@@ -14,6 +14,8 @@ import { categorySlug } from "@/lib/blog-index";
 import { absoluteUrl, authorName, authorPagePath } from "@/lib/site";
 import { faqJsonLd } from "@/lib/faq";
 import { getHubForPost } from "@/lib/hubs";
+import { extractHeadings } from "@/lib/toc";
+import TableOfContents from "@/components/TableOfContents";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
@@ -271,6 +273,9 @@ export default async function BlogPostPage({ params }: PageProps) {
               />
             </div>
           )}
+
+          {/* Jump links for long articles (renders nothing for short ones) */}
+          <TableOfContents headings={extractHeadings(post.content)} />
 
           {/* Rich Markdown Article Body */}
           <div className="mt-10 sm:mt-12">

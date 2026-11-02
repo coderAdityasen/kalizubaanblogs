@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import CopyCodeButton from "@/components/CopyCodeButton";
 import SmartImage from "@/components/SmartImage";
+import { remarkHeadingIds } from "@/lib/toc";
 
 // Default intrinsic size for images inside article bodies (the editor uploads
 // 1600x900 images). Used to reserve the right aspect ratio while loading.
@@ -47,20 +48,22 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
   return (
     <div className="prose dark:prose-invert max-w-none text-zinc-800 dark:text-zinc-200 leading-relaxed">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkHeadingIds]}
         components={{
           h1: ({ children }) => (
             <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-zinc-900 dark:text-white mt-8 mb-4">
               {children}
             </h1>
           ),
-          h2: ({ children }) => (
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-zinc-900 dark:text-white mt-10 mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
+          // Section ids come from remarkHeadingIds (table of contents links).
+          // scroll-mt keeps a jumped-to heading clear of the sticky navbar.
+          h2: ({ children, id }) => (
+            <h2 id={id} className="scroll-mt-20 text-2xl sm:text-3xl font-serif font-bold tracking-tight text-zinc-900 dark:text-white mt-10 mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
               {children}
             </h2>
           ),
-          h3: ({ children }) => (
-            <h3 className="text-xl sm:text-2xl font-serif font-semibold tracking-tight text-zinc-900 dark:text-white mt-6 mb-3">
+          h3: ({ children, id }) => (
+            <h3 id={id} className="scroll-mt-20 text-xl sm:text-2xl font-serif font-semibold tracking-tight text-zinc-900 dark:text-white mt-6 mb-3">
               {children}
             </h3>
           ),
