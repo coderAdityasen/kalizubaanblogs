@@ -1,11 +1,13 @@
 // Server component: Markdown is parsed and rendered to HTML on the server, so
 // react-markdown/remark-gfm never ship to the browser. Only the code-block copy
 // button (CopyCodeButton) is a client component.
+import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import CopyCodeButton from "@/components/CopyCodeButton";
 import SmartImage from "@/components/SmartImage";
 import { remarkHeadingIds } from "@/lib/toc";
+import { toInternalPath } from "@/lib/links";
 
 // Default intrinsic size for images inside article bodies (the editor uploads
 // 1600x900 images). Used to reserve the right aspect ratio while loading.
@@ -113,16 +115,37 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
           hr: () => (
             <hr className="my-8 border-zinc-200 dark:border-zinc-800" />
           ),
-          a: ({ href, children }) => (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-600 dark:text-indigo-400 underline underline-offset-4 font-medium hover:text-indigo-700 dark:hover:text-indigo-300"
-            >
-              {children}
-            </a>
-          ),
+          a: ({ href, children }) => {
+            const linkClass =
+              "text-indigo-600 dark:text-indigo-400 underline underline-offset-4 font-medium hover:text-indigo-700 dark:hover:text-indigo-300";
+            // Links to other kalizubaan articles stay in the same tab and use
+            // client-side navigation; only external sources open a new tab.
+            const internalPath = toInternalPath(href);
+            if (internalPath !== null) {
+              if (internalPath.startsWith("#")) {
+                return (
+                  <a href={internalPath} className={linkClass}>
+                    {children}
+                  </a>
+                );
+              }
+              return (
+                <Link href={internalPath} className={linkClass}>
+                  {children}
+                </Link>
+              );
+            }
+            return (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClass}
+              >
+                {children}
+              </a>
+            );
+          },
           img: ({ src, alt, title }) => {
             const imageSrc = typeof src === "string" ? src : "";
             const altText = alt || "Blog image";
