@@ -33,12 +33,15 @@ export default function TableOfContents({ headings }: { headings: TocHeading[] }
             ▾
           </span>
         </summary>
-        <ol className="list-decimal space-y-2 px-5 pb-5 pl-10 text-sm sm:text-base marker:text-zinc-500">
+        <ol className="list-decimal space-y-1 px-5 pb-4 pl-10 text-sm sm:text-base marker:text-zinc-500">
           {sections.map((heading) => (
             <li key={heading.id}>
+              {/* block + py-1.5 gives each link a full-width tap area of at
+                  least 32px, so a thumb doesn't hit the wrong section or
+                  collapse the box (Lighthouse "target-size"). */}
               <a
                 href={`#${heading.id}`}
-                className="text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:text-indigo-700 hover:underline dark:hover:text-indigo-300"
+                className="block py-1.5 text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:text-indigo-700 hover:underline dark:hover:text-indigo-300"
               >
                 {heading.text}
               </a>
