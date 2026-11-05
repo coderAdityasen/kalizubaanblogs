@@ -8,6 +8,13 @@ import { TOPIC_HUBS } from "@/lib/hubs";
 // of querying Supabase on every crawler hit.
 export const revalidate = 600;
 
+function postImages(post: { cover_image?: string | null; content?: string | null }): string[] {
+  const urls = new Set<string>();
+  if (post.cover_image) urls.add(post.cover_image);
+  for (const m of (post.content || "").matchAll(/!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/g)) urls.add(m[1]);
+  return [...urls].slice(0, 10);
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
   const posts = await getPosts();
@@ -17,6 +24,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(post.updated_at || post.created_at),
     changeFrequency: "weekly" as const,
     priority: 0.8,
+    // Image sitemap entries: cover plus any images embedded in the post body.
+    images: postImages(post),
   }));
 
   const latestPostDate = posts[0]

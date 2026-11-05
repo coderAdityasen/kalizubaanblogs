@@ -81,9 +81,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       images: [
         {
           url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
+          // Pipeline covers are 1600x900 (16:9); the fallback og-image is 1200x630.
+          width: post.cover_image ? 1600 : 1200,
+          height: post.cover_image ? 900 : 630,
+          alt: post.excerpt ? `${post.title}: ${post.excerpt}`.slice(0, 200) : post.title,
         },
       ],
     },
@@ -133,7 +134,11 @@ export default async function BlogPostPage({ params }: PageProps) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt,
-    image: post.cover_image ? [post.cover_image] : [`${siteUrl}/og-image.png`],
+    // ImageObject with real dimensions so Google can use the cover for Discover / Top stories (needs >= 1200px wide).
+    image: post.cover_image
+      ? [{ "@type": "ImageObject", url: post.cover_image, width: 1600, height: 900, caption: post.title }]
+      : [{ "@type": "ImageObject", url: `${siteUrl}/og-image.png`, width: 1200, height: 630 }],
+    thumbnailUrl: post.cover_image || `${siteUrl}/og-image.png`,
     datePublished: post.created_at,
     dateModified: modifiedAt,
     author: {
