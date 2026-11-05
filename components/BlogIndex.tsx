@@ -69,7 +69,7 @@ export default function BlogIndex({ title, intro, posts, pageInfo, categories, a
           </Link>
           {categories.map((cat) => (
             <Link key={cat.slug} href={`/blog/category/${cat.slug}`} className={pill(activeCategory === cat.slug)}>
-              {cat.name} <span className="opacity-70">({cat.count})</span>
+              {cat.name} <span className="font-normal">({cat.count})</span>
             </Link>
           ))}
         </nav>
@@ -78,6 +78,8 @@ export default function BlogIndex({ title, intro, posts, pageInfo, categories, a
           <p className="py-16 text-center text-sm text-zinc-500">No articles here yet.</p>
         ) : (
           <>
+            {/* Cards use <h3>; this keeps the outline h1 → h2 → h3 for screen readers. */}
+            <h2 className="sr-only">{activeCategory ? `${title} articles` : "All articles"}</h2>
             <p className="mb-6 text-xs font-medium text-zinc-500 dark:text-zinc-400">
               {pageInfo.totalPages > 1
                 ? `Showing ${first}–${last} of ${pageInfo.totalItems} articles, newest first (page ${pageInfo.page} of ${pageInfo.totalPages})`

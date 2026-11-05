@@ -28,7 +28,6 @@ export default function Pagination({ page, totalPages, basePath }: PageInfo) {
     "inline-flex items-center justify-center min-w-10 h-10 px-3 rounded-xl text-sm font-semibold transition-colors";
   const idle =
     "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700";
-  const disabled = "text-zinc-300 dark:text-zinc-600 border border-zinc-100 dark:border-zinc-800";
 
   return (
     <nav aria-label="Article pages" className="mt-12 flex flex-wrap items-center justify-center gap-2">
@@ -37,12 +36,7 @@ export default function Pagination({ page, totalPages, basePath }: PageInfo) {
           <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           Newer
         </Link>
-      ) : (
-        <span className={`${base} ${disabled} gap-1`} aria-hidden="true">
-          <ChevronLeft className="w-4 h-4" />
-          Newer
-        </span>
-      )}
+      ) : null}
 
       {visiblePages(page, totalPages).map((n, i) =>
         n === "gap" ? (
@@ -65,12 +59,7 @@ export default function Pagination({ page, totalPages, basePath }: PageInfo) {
           Older
           <ChevronRight className="w-4 h-4" aria-hidden="true" />
         </Link>
-      ) : (
-        <span className={`${base} ${disabled} gap-1`} aria-hidden="true">
-          Older
-          <ChevronRight className="w-4 h-4" />
-        </span>
-      )}
+      ) : null}
     </nav>
   );
 }
