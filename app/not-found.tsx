@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLockup } from "@/components/BrandLogo";
 import { Home, Newspaper } from "lucide-react";
 
 // Shown for every unknown URL and every notFound() call (old or mistyped post
@@ -17,7 +18,8 @@ const topics = [
 
 export default function NotFound() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <BrandLockup className="mb-8 w-36 sm:w-40" />
       <p className="text-sm font-semibold tracking-wide uppercase text-rose-700 dark:text-rose-400">
         Error 404
       </p>

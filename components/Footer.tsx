@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandSymbol } from "@/components/BrandLogo";
 import { staticPages } from "@/lib/site";
 
 export default function Footer() {
@@ -8,10 +9,13 @@ export default function Footer() {
     <footer className="mt-auto border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 py-12 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col items-center sm:items-start gap-1">
-            <span className="font-serif font-bold text-base text-zinc-900 dark:text-zinc-100">
-              Kali Zubaan Blog
-            </span>
+          <div className="flex flex-col items-center sm:items-start gap-2">
+            <Link href="/" aria-label="Kali Zubaan home" className="inline-flex items-center gap-3">
+              <BrandSymbol />
+              <span className="font-serif font-bold text-base text-zinc-900 dark:text-zinc-100">
+                Kali Zubaan Blog
+              </span>
+            </Link>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
               Unfiltered takes on money, health, side hustles and tech in India.
             </p>

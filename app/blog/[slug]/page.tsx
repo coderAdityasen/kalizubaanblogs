@@ -157,6 +157,8 @@ export default async function BlogPostPage({ params }: PageProps) {
       logo: {
         "@type": "ImageObject",
         url: `${siteUrl}/logo.png`,
+        width: 600,
+        height: 240,
       },
     },
     mainEntityOfPage: {
