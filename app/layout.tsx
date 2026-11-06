@@ -54,6 +54,9 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    // Also on the generic robots tag so Bing and others show large image previews, not just Googlebot.
+    "max-image-preview": "large",
+    "max-snippet": -1,
     googleBot: {
       index: true,
       follow: true,

@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
     const baseName = path.basename(originalName, extension)
       .toLowerCase()
       .replace(/[^a-z0-9_-]/g, "-")
-      .slice(0, 40);
+      .slice(0, 80);
 
     const uniqueId = Math.random().toString(36).substring(2, 8);
     const sanitizedFileName = `${Date.now()}-${uniqueId}-${baseName}${extension}`;
