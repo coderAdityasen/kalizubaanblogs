@@ -1,31 +1,21 @@
 import Image from "next/image";
 
 const dimensions = {
-  genie: { width: 240, height: 384 },
+  genie: { width: 480, height: 480 },
   wordmark: { width: 840, height: 200 },
   lockup: { width: 480, height: 528 },
 };
 
-function ThemedGenie({ className, priority = false }: { className: string; priority?: boolean }) {
+function Genie({ className, priority = false }: { className: string; priority?: boolean }) {
   return (
-    <>
-      <Image
-        src="/brand/genie-light.webp"
-        alt=""
-        aria-hidden="true"
-        {...dimensions.genie}
-        className={`${className} dark:hidden`}
-        priority={priority}
-      />
-      <Image
-        src="/brand/genie-dark.webp"
-        alt=""
-        aria-hidden="true"
-        {...dimensions.genie}
-        className={`hidden ${className} dark:block`}
-        priority={priority}
-      />
-    </>
+    <Image
+      src="/brand/genie.webp"
+      alt=""
+      aria-hidden="true"
+      {...dimensions.genie}
+      className={className}
+      priority={priority}
+    />
   );
 }
 
@@ -33,7 +23,7 @@ function ThemedGenie({ className, priority = false }: { className: string; prior
 export function HeaderBrand() {
   return (
     <span className="relative inline-flex h-12 w-[164px] shrink-0 items-center sm:w-[181px]">
-      <ThemedGenie className="h-11 w-auto" priority />
+      <Genie className="h-11 w-auto" priority />
       <Image
         src="/brand/wordmark-light.webp"
         alt=""
@@ -82,7 +72,7 @@ export function BrandLockup({ className = "" }: { className?: string }) {
 export function BrandSymbol() {
   return (
     <span className="inline-flex" aria-hidden="true">
-      <ThemedGenie className="h-12 w-auto" />
+      <Genie className="h-12 w-auto" />
     </span>
   );
 }
