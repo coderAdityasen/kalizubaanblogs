@@ -144,12 +144,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Umami Analytics */}
+        {/* Umami: lazyOnload so analytics does not preload in <head> beside the LCP image. */}
         <Script
           defer
           src="https://umami-nu-eosin.vercel.app/script.js"
           data-website-id="42eaba06-6a90-4b1d-a504-785ddf302757"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </head>
       <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 font-sans selection:bg-rose-500 selection:text-white">
