@@ -39,6 +39,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  manifest: "/manifest.webmanifest",
   title: {
     default: siteTitle,
     template: "%s | Kali Zubaan Blog",
@@ -108,7 +109,7 @@ export default function RootLayout({
         "@id": `${siteUrl}/#website`,
         name: siteName,
         alternateName: siteAlternateNames,
-        url: siteUrl,
+        url: `${siteUrl}/`,
         description: siteDescription,
         inLanguage: "en-IN",
         publisher: { "@id": `${siteUrl}/#organization` },
@@ -118,7 +119,7 @@ export default function RootLayout({
         "@id": `${siteUrl}/#organization`,
         name: siteName,
         alternateName: blogName,
-        url: siteUrl,
+        url: `${siteUrl}/`,
         logo: {
           "@type": "ImageObject",
           url: `${siteUrl}/logo.png`,

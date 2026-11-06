@@ -17,7 +17,7 @@ export const authorPagePath = "/author/aditya-sen";
 export const blogName = "Kali Zubaan Blog";
 
 /** Other names Google may show for the site (WebSite.alternateName). */
-export const siteAlternateNames = ["Kali Zubaan Blog", "kalizubaan", "kalizubaan blogs"];
+export const siteAlternateNames = ["Kalizubaan", "kalizubaan.fun"];
 
 /**
  * What the blog actually covers. Keep these in sync with the categories posts
