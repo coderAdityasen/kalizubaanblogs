@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StaticPage from "@/components/StaticPage";
+import { BrandLockup } from "@/components/BrandLogo";
 import { absoluteUrl } from "@/lib/site";
 
 const description =
@@ -19,6 +20,7 @@ export default function AboutPage() {
       title="About Kali Zubaan"
       intro="An independent blog with honest, practical writing on money, health, technology and life."
     >
+      <BrandLockup className="mx-auto mb-4 w-44 sm:w-52" />
       <h2>Who writes this blog</h2>
       <p>
         Hi, I&apos;m Aditya Sen, a software developer based in Indore, India. I build web

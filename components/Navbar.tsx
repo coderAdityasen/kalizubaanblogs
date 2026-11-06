@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { HeaderBrand } from "@/components/BrandLogo";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
@@ -9,16 +10,12 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* Brand Logo - Kali Zubaan */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div aria-hidden="true" className="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-serif font-black text-sm shadow-sm group-hover:scale-105 transition-transform">
-            KZ
-          </div>
-          <div className="flex flex-col">
-            <span className="font-serif font-bold text-lg sm:text-xl tracking-tight text-zinc-900 dark:text-zinc-50">
-              Kali Zubaan
-            </span>
-          </div>
+        <Link
+          href="/"
+          aria-label="Kali Zubaan home"
+          className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rose-500"
+        >
+          <span className="transition-opacity hover:opacity-75"><HeaderBrand /></span>
         </Link>
 
         {/* Clean Publication Navigation */}

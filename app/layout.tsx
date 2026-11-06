@@ -122,6 +122,8 @@ export default function RootLayout({
         logo: {
           "@type": "ImageObject",
           url: `${siteUrl}/logo.png`,
+          width: 600,
+          height: 240,
         },
       },
     ],
