@@ -1,12 +1,23 @@
-import { MetadataRoute } from "next";
 import { getPosts } from "@/lib/supabase";
 import { absoluteUrl, authorPagePath, staticPages } from "@/lib/site";
 import { getCategories } from "@/lib/blog-index";
 import { TOPIC_HUBS } from "@/lib/hubs";
 
-// Cached like the pages it lists: regenerated at most every 10 minutes instead
-// of querying Supabase on every crawler hit.
+// Cached like /feed.xml: rebuilt at most every 10 minutes, and refreshed right
+// away when a post is published or edited (the posts API revalidates /sitemap.xml).
+// A route handler is used instead of app/sitemap.ts because Next's metadata
+// sitemap was generated once at deploy and ignored both `export const revalidate`
+// and revalidatePath("/sitemap.xml"), so new posts stayed hidden from crawlers
+// until the next deploy.
 export const revalidate = 600;
+
+type SitemapEntry = {
+  url: string;
+  lastModified: Date;
+  changeFrequency: "daily" | "weekly" | "monthly" | "yearly";
+  priority: number;
+  images?: string[];
+};
 
 function postImages(post: { cover_image?: string | null; content?: string | null }): string[] {
   const urls = new Set<string>();
@@ -15,7 +26,7 @@ function postImages(post: { cover_image?: string | null; content?: string | null
   return [...urls].slice(0, 10);
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+async function getSitemapEntries(): Promise<SitemapEntry[]> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
   const posts = await getPosts();
 
@@ -90,4 +101,52 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...postsUrls,
   ];
+}
+
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function toXml(entries: SitemapEntry[]): string {
+  const urls = entries
+    .map((entry) => {
+      const images = (entry.images || [])
+        .map(
+          (src) =>
+            `    <image:image>\n      <image:loc>${escapeXml(src)}</image:loc>\n    </image:image>`
+        )
+        .join("\n");
+      return [
+        "  <url>",
+        `    <loc>${escapeXml(entry.url)}</loc>`,
+        images,
+        `    <lastmod>${entry.lastModified.toISOString()}</lastmod>`,
+        `    <changefreq>${entry.changeFrequency}</changefreq>`,
+        `    <priority>${entry.priority}</priority>`,
+        "  </url>",
+      ]
+        .filter(Boolean)
+        .join("\n");
+    })
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${urls}
+</urlset>
+`;
+}
+
+export async function GET() {
+  const xml = toXml(await getSitemapEntries());
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+    },
+  });
 }
