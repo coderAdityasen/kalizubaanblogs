@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex flex-col items-center sm:items-start gap-2">
-            <Link href="/" aria-label="Kali Zubaan home" className="inline-flex items-center gap-3">
+            <Link href="/" className="inline-flex items-center gap-3">
               <BrandSymbol />
               <span className="font-serif font-bold text-base text-zinc-900 dark:text-zinc-100">
                 Kali Zubaan Blog

@@ -187,6 +187,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         />
       )}
 
+      <main>
       <article className="min-h-screen py-10 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           {/* Breadcrumbs (also emitted as BreadcrumbList structured data) */}
@@ -337,6 +338,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </div>
       </article>
+      </main>
     </>
   );
 }
