@@ -5,6 +5,10 @@ const supabaseHost = getSupabaseStorageHost();
 
 const nextConfig: NextConfig = {
   images: {
+    // Vercel Hobby's image-optimization quota ran out (402
+    // OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED), blanking logos and covers.
+    // Covers are already compressed JPGs, so serve originals directly.
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     // Uploaded covers get unique, timestamped file names, so an optimized copy
     // never goes stale. Supabase serves originals with `no-cache`, so without
