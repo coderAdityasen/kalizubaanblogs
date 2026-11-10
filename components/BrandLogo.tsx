@@ -6,13 +6,15 @@ const dimensions = {
   lockup: { width: 480, height: 528 },
 };
 
+const headerImageProps = { loading: "eager", fetchPriority: "low" } as const;
+
 function Genie({
   className,
-  priority = false,
+  headerSlot = false,
   sizes = "48px",
 }: {
   className: string;
-  priority?: boolean;
+  headerSlot?: boolean;
   sizes?: string;
 }) {
   return (
@@ -23,16 +25,23 @@ function Genie({
       {...dimensions.genie}
       className={className}
       sizes={sizes}
-      priority={priority}
+      {...(headerSlot ? headerImageProps : {})}
     />
   );
 }
 
-/** Official genie and wordmark, with fixed image ratios and a no-JS text fallback. */
+/**
+ * Official genie and wordmark, with fixed image ratios and a no-JS text fallback.
+ * They sit above the fold, so they load eagerly, but they are tiny and never the
+ * LCP element. `priority` (and React's automatic preload of eager images, which
+ * `fetchPriority="low"` opts out of) put three <link rel="preload"> tags in every
+ * page's <head>, including the wordmark for the hidden theme, ahead of the post
+ * cover that is the real LCP image. The fixed box means no layout shift.
+ */
 export function HeaderBrand() {
   return (
     <span className="relative inline-flex h-12 w-[164px] shrink-0 items-center sm:w-[181px]">
-      <Genie className="h-11 w-auto" sizes="44px" priority />
+      <Genie className="h-11 w-auto" sizes="44px" headerSlot />
       <Image
         src="/brand/wordmark-light.webp"
         alt=""
@@ -40,7 +49,7 @@ export function HeaderBrand() {
         {...dimensions.wordmark}
         className="ml-2 h-6 w-auto dark:hidden sm:h-7"
         sizes="(min-width: 640px) 120px, 100px"
-        priority
+        {...headerImageProps}
       />
       <Image
         src="/brand/wordmark-dark.webp"
@@ -49,7 +58,7 @@ export function HeaderBrand() {
         {...dimensions.wordmark}
         className="ml-2 hidden h-6 w-auto dark:block sm:h-7"
         sizes="(min-width: 640px) 120px, 100px"
-        priority
+        {...headerImageProps}
       />
       <noscript>
         <span className="font-serif text-lg font-bold whitespace-nowrap">Kali Zubaan</span>
