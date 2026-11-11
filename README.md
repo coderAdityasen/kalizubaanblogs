@@ -162,6 +162,7 @@ The official genie and Kalizubaan wordmark are organized in `public/brand/`:
 
 - `genie.webp`: transparent full-color blue genie mark for the header, footer and other compact placements. One version works across light and dark themes.
 - `wordmark-{light,dark}.webp`: transparent wordmark; the light variant has dark ink and the dark variant has white ink.
+- `genie-96.webp` and `wordmark-{light,dark}-252.webp`: small copies of the masters sized for 2x screens. Images are served unoptimized, so the header and footer use these instead of downloading the 480px/840px masters on every page. Regenerate them if the masters change.
 - `logo-{light,dark}.webp`: stacked genie and wordmark, composed from the official separate artwork, for About and the 404 page.
 
 `components/BrandLogo.tsx` supplies the header, full lockup and footer symbol with intrinsic image dimensions and the accessible Kali Zubaan name. `public/logo.png` keeps its public URL for Organization and BlogPosting structured data: it is the official wordmark at 600×240 on a white field. `public/og-image.png` is the 1200×630 default social card. The browser icons (`app/favicon.ico` with 16/32/48px frames, `app/icon.png` at 192px, and `app/apple-icon.png`) use the blue genie on a padded white square. `app/manifest.ts` names the site Kali Zubaan and exposes those icons to installed browsers.
