@@ -1,8 +1,12 @@
 import Image from "next/image";
 
+// Images are served unoptimized (next.config.ts), so the file on disk is exactly
+// what browsers download. Header and footer use small copies sized for 2x
+// screens (genie shows at 44-48px, wordmark at ~100-120px wide) instead of the
+// 480px / 840px masters, which cost ~92 KiB on every page.
 const dimensions = {
-  genie: { width: 480, height: 480 },
-  wordmark: { width: 840, height: 200 },
+  genie: { width: 96, height: 96 },
+  wordmark: { width: 252, height: 60 },
   lockup: { width: 480, height: 528 },
 };
 
@@ -19,7 +23,7 @@ function Genie({
 }) {
   return (
     <Image
-      src="/brand/genie.webp"
+      src="/brand/genie-96.webp"
       alt=""
       aria-hidden="true"
       {...dimensions.genie}
@@ -43,7 +47,7 @@ export function HeaderBrand() {
     <span className="relative inline-flex h-12 w-[164px] shrink-0 items-center sm:w-[181px]">
       <Genie className="h-11 w-auto" sizes="44px" headerSlot />
       <Image
-        src="/brand/wordmark-light.webp"
+        src="/brand/wordmark-light-252.webp"
         alt=""
         aria-hidden="true"
         {...dimensions.wordmark}
@@ -52,7 +56,7 @@ export function HeaderBrand() {
         {...headerImageProps}
       />
       <Image
-        src="/brand/wordmark-dark.webp"
+        src="/brand/wordmark-dark-252.webp"
         alt=""
         aria-hidden="true"
         {...dimensions.wordmark}
