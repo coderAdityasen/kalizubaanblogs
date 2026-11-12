@@ -38,3 +38,35 @@ export function canOptimizeImage(src: string | undefined | null): src is string 
     url.search === ""
   );
 }
+
+const SUPABASE_RENDER_PATH = "/storage/v1/render/image/public/";
+
+/** Widths offered in a cover's srcset (covers are uploaded at ~1600px; small sizes cover avatars). */
+export const SUPABASE_IMAGE_WIDTHS = [128, 256, 384, 640, 828, 1200, 1600] as const;
+
+/** True for a public Supabase Storage object that can be resized on the fly. */
+export function isSupabaseStorageImage(src: string): boolean {
+  if (!canOptimizeImage(src)) return false;
+  const url = new URL(src);
+  return url.hostname === getSupabaseStorageHost() && url.pathname.startsWith(SUPABASE_PUBLIC_STORAGE_PATH);
+}
+
+/**
+ * Supabase Storage image transformations: the `render/image` endpoint returns
+ * a resized copy (WebP when the browser accepts it), cached on Supabase's CDN.
+ * `resize=contain` keeps the original aspect ratio when only a width is given.
+ */
+export function supabaseImageUrl(src: string, width: number, quality = 75): string {
+  const url = new URL(src);
+  url.pathname = url.pathname.replace(SUPABASE_PUBLIC_STORAGE_PATH, SUPABASE_RENDER_PATH);
+  url.search = new URLSearchParams({
+    width: String(width),
+    resize: "contain",
+    quality: String(quality),
+  }).toString();
+  return url.toString();
+}
+
+export function supabaseImageSrcSet(src: string): string {
+  return SUPABASE_IMAGE_WIDTHS.map((w) => `${supabaseImageUrl(src, w)} ${w}w`).join(", ");
+}
