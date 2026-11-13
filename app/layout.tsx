@@ -20,9 +20,14 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+// Mono is only used for small labels, table headers and code blocks, never
+// for above-the-fold body text or the LCP element. Preloading it on every page
+// made a ~23 KB font compete at high priority with the cover image (the LCP),
+// so let the browser fetch it only when a mono glyph is actually rendered.
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false,
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
