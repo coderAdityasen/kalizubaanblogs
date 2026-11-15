@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import StaticPage from "@/components/StaticPage";
-import { absoluteUrl, contactEmail } from "@/lib/site";
+import { contactEmail, pageSocialMetadata } from "@/lib/site";
 
 const description = "Contact Kali Zubaan for questions, feedback, corrections or collaboration requests.";
 
 export const metadata: Metadata = {
   title: "Contact",
   description,
-  alternates: { canonical: absoluteUrl("/contact") },
-  openGraph: { title: "Contact | Kali Zubaan", description, url: absoluteUrl("/contact") },
+  ...pageSocialMetadata({ title: "Contact | Kali Zubaan", description, path: "/contact" }),
 };
 
 export default function ContactPage() {
