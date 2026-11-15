@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLogo";
 import { Home, Newspaper } from "lucide-react";
@@ -9,6 +10,24 @@ import { Home, Newspaper } from "lucide-react";
 // Kept static on purpose: Next.js embeds this page in every page's payload, so
 // fetching recent posts here would add weight to every article. The topic list
 // matches the categories linked from the About page.
+// Without its own metadata the 404 page inherited the homepage's title,
+// description and "index, follow" robots tags from the root layout, so a broken
+// link showed the homepage title in the browser tab and in shared previews, and
+// the page carried two contradictory robots tags (Next.js's automatic
+// "noindex" plus the layout's "index, follow"). Setting robots here replaces the
+// layout's tags, leaving one consistent "noindex, follow" so crawlers still
+// follow the homepage, blog and topic links below.
+export const metadata: Metadata = {
+  title: "Page not found",
+  description:
+    "This page doesn't exist on Kali Zubaan. Browse the latest posts or pick a topic: personal finance, tech and AI, health and fitness, or side hustles.",
+  robots: {
+    index: false,
+    follow: true,
+    googleBot: { index: false, follow: true },
+  },
+};
+
 const topics = [
   { name: "Personal finance", href: "/blog/category/personal-finance" },
   { name: "Tech & AI", href: "/blog/category/tech-ai" },
