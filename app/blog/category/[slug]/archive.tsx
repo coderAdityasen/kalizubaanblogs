@@ -31,6 +31,7 @@ export async function categoryArchiveMetadata(slug: string, page: number): Promi
       description,
       url,
       siteName,
+      locale: "en_IN",
       images: [{ url: "/og-image.png", width: 1200, height: 630, alt: `${category.name} on ${blogName}` }],
     },
   };
