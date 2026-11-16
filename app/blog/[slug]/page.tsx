@@ -76,6 +76,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: post.excerpt,
       url: articleUrl,
       siteName: "Kali Zubaan",
+      // A page-level openGraph replaces the layout one, so the locale is repeated here.
+      locale: "en_IN",
       publishedTime: post.created_at,
       modifiedTime: post.updated_at || post.created_at,
       authors: [post.author_name || "Aditya"],
@@ -136,6 +138,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt,
+    inLanguage: "en-IN",
     // ImageObject with real dimensions so Google can use the cover for Discover / Top stories (needs >= 1200px wide).
     image: post.cover_image
       ? [{ "@type": "ImageObject", url: post.cover_image, width: 1600, height: 900, caption: post.title }]
