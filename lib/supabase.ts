@@ -80,6 +80,46 @@ export async function checkSupabaseStatus(): Promise<{
   }
 }
 
+/** PostgREST code for "table not found": the posts table has not been created yet (first-time setup). */
+const TABLE_MISSING = "PGRST205";
+
+class SupabaseReadError extends Error {
+  constructor(what: string, cause: unknown) {
+    const detail =
+      cause && typeof cause === "object" && "message" in cause
+        ? String((cause as { message: unknown }).message)
+        : String(cause);
+    super(`Supabase read failed (${what}): ${detail}`);
+    this.name = "SupabaseReadError";
+  }
+}
+
+type ReadResult<T> = { data: T | null; error: { code?: string; message: string } | null };
+
+/**
+ * Run a Supabase read. Returns `undefined` when the posts table does not exist
+ * yet (so local setup can fall back to sample posts) and throws on any other
+ * error. supabase-js already retries network failures and 503/520 answers with
+ * backoff before an error gets here.
+ *
+ * Throwing matters in production: these reads run inside ISR regeneration, and
+ * Next.js keeps serving the last good page when a regeneration throws (then
+ * retries on the next request). Swallowing the error and returning sample posts
+ * or null instead turned a slow or failing database call into a cached 404 for
+ * a real article, and demo posts in the RSS feed, until the next revalidation.
+ */
+async function read<T>(what: string, run: () => PromiseLike<ReadResult<T>>): Promise<T | null | undefined> {
+  let result: ReadResult<T>;
+  try {
+    result = await run();
+  } catch (err: unknown) {
+    throw new SupabaseReadError(what, err);
+  }
+  if (!result.error) return result.data;
+  if (result.error.code === TABLE_MISSING) return undefined;
+  throw new SupabaseReadError(what, result.error);
+}
+
 /**
  * Fetch all published posts
  */
@@ -87,26 +127,17 @@ export async function getPosts(): Promise<BlogPost[]> {
   const supabase = getPublicSupabaseClient();
 
   if (supabase) {
-    try {
-      const { data, error } = await supabase
+    const data = await read<BlogPost[]>("published posts", () =>
+      supabase
         .from("posts")
         .select("*")
         .eq("published", true)
-        .order("created_at", { ascending: false });
-
-      if (!error && Array.isArray(data)) {
-        if (data.length > 0) {
-          return data as BlogPost[];
-        }
-        // If table exists but has 0 posts, return empty array
-        return [];
-      }
-    } catch {
-      // Quiet fallback to sample posts
-    }
+        .order("created_at", { ascending: false })
+    );
+    if (data !== undefined) return data ?? [];
   }
 
-  // Fallback to local memory store
+  // No Supabase configured, or the posts table is not created yet: sample posts
   const posts = getLocalStore();
   return posts
     .filter((p) => p.published)
@@ -114,28 +145,20 @@ export async function getPosts(): Promise<BlogPost[]> {
 }
 
 /**
- * Fetch a single post by slug
+ * Fetch a single post by slug. Returns null only when no such post exists;
+ * throws if the database cannot be read (see read).
  */
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   const supabase = getPublicSupabaseClient();
 
   if (supabase) {
-    try {
-      const { data, error } = await supabase
-        .from("posts")
-        .select("*")
-        .eq("slug", slug)
-        .maybeSingle();
-
-      if (!error && data) {
-        return data as BlogPost;
-      }
-    } catch {
-      // Quiet fallback
-    }
+    const data = await read<BlogPost>(`post "${slug}"`, () =>
+      supabase.from("posts").select("*").eq("slug", slug).maybeSingle()
+    );
+    if (data !== undefined) return data;
   }
 
-  // Fallback to local memory store
+  // No Supabase configured, or the posts table is not created yet: sample posts
   const posts = getLocalStore();
   return posts.find((p) => p.slug === slug) || null;
 }
