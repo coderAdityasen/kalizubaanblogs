@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getPosts } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import { getCategories } from "@/lib/blog-index";
 import { CategoryArchive, categoryArchiveMetadata } from "./archive";
 
@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = await getPosts();
+  const posts = await getPostSummaries();
   return getCategories(posts).map((cat) => ({ slug: cat.slug }));
 }
 

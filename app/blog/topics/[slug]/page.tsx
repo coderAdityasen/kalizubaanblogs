@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPosts } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import { toSummaries } from "@/lib/blog-index";
 import { getHub, TOPIC_HUBS } from "@/lib/hubs";
 import PostCard from "@/components/PostCard";
@@ -46,7 +46,7 @@ export default async function TopicHubPage({ params }: PageProps) {
   const hub = getHub(slug);
   if (!hub) notFound();
 
-  const posts = await getPosts();
+  const posts = await getPostSummaries();
   const bySlug = new Map(posts.map((post) => [post.slug, post]));
   const pillar = hub.pillarSlug ? bySlug.get(hub.pillarSlug) : undefined;
   const clusterPosts = hub.postSlugs.flatMap((s) => {

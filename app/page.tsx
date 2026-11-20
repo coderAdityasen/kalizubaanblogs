@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getPosts, checkSupabaseStatus } from "@/lib/supabase";
+import { checkSupabaseStatus } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import BlogList from "@/components/BlogList";
 import AdminSetupBanner from "@/components/AdminSetupBanner";
 import Newsletter from "@/components/Newsletter";
@@ -19,19 +20,14 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const [posts, supabaseStatus] = await Promise.all([
-    getPosts(),
+    getPostSummaries(),
     checkSupabaseStatus(),
   ]);
 
   // BlogList is a client component, so everything passed to it is serialised
-  // into the page HTML. Cards only need title, excerpt, cover and meta, so drop
-  // the full Markdown body, and only send the latest posts: the full archive
-  // is paginated at /blog, so the homepage stays the same size as posts pile up.
-  const postSummaries = posts.slice(0, HOMEPAGE_POST_COUNT).map((post) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { content, ...summary } = post;
-    return summary;
-  });
+  // into the page HTML. Only send the latest posts: the full archive is
+  // paginated at /blog, so the homepage stays the same size as posts pile up.
+  const postSummaries = posts.slice(0, HOMEPAGE_POST_COUNT);
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50/50 dark:bg-zinc-950">

@@ -23,8 +23,8 @@ export function getCategories(posts: Pick<BlogPost, "category">[]): BlogCategory
   );
 }
 
-/** Drop the Markdown body so list pages only carry card data. */
-export function toSummaries(posts: BlogPost[]): BlogPostSummary[] {
+/** Drop the Markdown body (if present) so list pages only carry card data. */
+export function toSummaries(posts: Array<BlogPostSummary & { content?: string }>): BlogPostSummary[] {
   return posts.map((post) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { content, ...summary } = post;
