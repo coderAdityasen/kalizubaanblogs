@@ -10,7 +10,7 @@ import type { BlogPost, BlogPostSummary } from "@/types/blog";
  */
 export function getRelatedPosts(
   current: Pick<BlogPost, "slug" | "category" | "tags">,
-  allPosts: BlogPost[],
+  allPosts: Array<BlogPostSummary & { content?: string }>,
   limit = 3
 ): BlogPostSummary[] {
   const currentCategory = (current.category || "").trim().toLowerCase();

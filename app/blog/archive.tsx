@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPosts } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import { getCategories, toSummaries } from "@/lib/blog-index";
 import { pageHref, pageSlice, totalPagesFor } from "@/lib/pagination";
 import BlogIndex from "@/components/BlogIndex";
@@ -39,7 +39,7 @@ export function blogArchiveMetadata(page: number): Metadata {
 }
 
 export async function BlogArchive({ page }: { page: number }) {
-  const posts = await getPosts(); // published only, newest first
+  const posts = await getPostSummaries(); // published only, newest first
   const totalPages = totalPagesFor(posts.length);
 
   if (page > totalPages) notFound();

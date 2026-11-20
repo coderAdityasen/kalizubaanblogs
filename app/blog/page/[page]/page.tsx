@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { getPosts } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import { laterPageParams, parsePageParam } from "@/lib/pagination";
 import { BlogArchive, blogArchiveMetadata } from "../../archive";
 
@@ -12,7 +12,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return laterPageParams((await getPosts()).length);
+  return laterPageParams((await getPostSummaries()).length);
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

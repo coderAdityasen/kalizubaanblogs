@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPosts } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import { categorySlug, getCategories, toSummaries } from "@/lib/blog-index";
 import { pageHref, pageSlice, totalPagesFor } from "@/lib/pagination";
 import BlogIndex from "@/components/BlogIndex";
@@ -10,7 +10,7 @@ const basePathFor = (slug: string) => `/blog/category/${slug}`;
 
 /** Metadata for /blog/category/<slug> (page 1) and its /page/<n> pages. */
 export async function categoryArchiveMetadata(slug: string, page: number): Promise<Metadata> {
-  const category = getCategories(await getPosts()).find((cat) => cat.slug === slug);
+  const category = getCategories(await getPostSummaries()).find((cat) => cat.slug === slug);
 
   if (!category) {
     return { title: "Category Not Found", robots: { index: false } };
@@ -37,7 +37,7 @@ export async function categoryArchiveMetadata(slug: string, page: number): Promi
 }
 
 export async function CategoryArchive({ slug, page }: { slug: string; page: number }) {
-  const posts = await getPosts();
+  const posts = await getPostSummaries();
   const categories = getCategories(posts);
   const category = categories.find((cat) => cat.slug === slug);
 

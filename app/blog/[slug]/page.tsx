@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, Clock, History } from "lucide-react";
-import { getPostBySlug, getPosts } from "@/lib/supabase";
+import { getPostBySlug } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import MarkdownContent from "@/components/MarkdownContent";
 import ShareBar from "@/components/ShareBar";
 import RelatedPosts from "@/components/RelatedPosts";
@@ -32,7 +33,7 @@ interface PageProps {
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const posts = await getPosts();
+  const posts = await getPostSummaries();
   return posts.map((post) => ({
     slug: post.slug,
   }));
@@ -102,7 +103,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const [post, allPosts] = await Promise.all([getPostBySlug(slug), getPosts()]);
+  const [post, allPosts] = await Promise.all([getPostBySlug(slug), getPostSummaries()]);
 
   if (!post) {
     notFound();
