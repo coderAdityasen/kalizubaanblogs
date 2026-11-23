@@ -4,6 +4,7 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import ThemeScript from "@/components/ui/ThemeScript";
 import Script from "next/script";
+import { adsenseClient } from "@/components/ads/AdSlot";
 import "./globals.css";
 import {
   siteTitle,
@@ -179,6 +180,15 @@ export default function RootLayout({
           data-website-id="42eaba06-6a90-4b1d-a504-785ddf302757"
           strategy="lazyOnload"
         />
+        {/* AdSense loads only once a publisher id is configured, after the page is idle. */}
+        {adsenseClient && (
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+            crossOrigin="anonymous"
+            strategy="lazyOnload"
+          />
+        )}
       </head>
       <body className="min-h-full flex flex-col bg-bg text-text font-sans">
         <SiteHeader />

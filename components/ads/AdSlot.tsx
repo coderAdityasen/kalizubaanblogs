@@ -18,6 +18,11 @@ export const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "";
  * id (NEXT_PUBLIC_ADSENSE_SLOT_<PLACEMENT>) are set, so reviewers never see
  * empty boxes before approval.
  */
+/** True when this placement would render (publisher id and slot id both set). */
+export function adSlotEnabled(placement: AdPlacement): boolean {
+  return Boolean(adsenseClient && process.env[`NEXT_PUBLIC_ADSENSE_SLOT_${placement.toUpperCase()}`]);
+}
+
 export default function AdSlot({ placement, className = "" }: { placement: AdPlacement; className?: string }) {
   const slot = process.env[`NEXT_PUBLIC_ADSENSE_SLOT_${placement.toUpperCase()}`];
   if (!adsenseClient || !slot) return null;

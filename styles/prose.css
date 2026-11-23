@@ -100,3 +100,25 @@
 /* Static pages (About, legal) share the reading styles but in sans. */
 .prose-kz.prose-static { --font-article: var(--font-sans); font-size: var(--text-ui); line-height: 1.7; }
 .prose-kz.prose-static h2 { font-size: 1.375rem; }
+
+/* Markdown images sit inside <p>, so the figure is a block <span>. */
+.prose-kz .kz-figure { display: block; margin-block: 2em; }
+.prose-kz .kz-figure img { width: 100%; height: auto; border-radius: var(--radius-lg); background: var(--surface-2); }
+.prose-kz .kz-figure .kz-caption {
+  display: block; margin-top: 0.6em; font-family: var(--font-sans); font-size: 0.8125rem;
+  line-height: 1.45; color: var(--muted); text-align: center;
+}
+.prose-kz p:has(> .kz-figure:only-child) { margin-block: 0; }
+
+.prose-kz .code-block {
+  border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+  background: #0d1117; color: #e6edf3; font-family: var(--font-mono);
+}
+.prose-kz .code-block > span:first-child {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.4rem 0.9rem; font-size: 0.75rem; color: #9aa4b2; border-bottom: 1px solid #222a35;
+}
+.prose-kz .code-block code { background: none; border: 0; padding: 1rem; color: inherit; font-size: 0.85rem; border-radius: 0; }
+
+/* Headings clear the sticky header when jumped to. */
+.prose-kz [id] { scroll-margin-top: 5.5rem; }

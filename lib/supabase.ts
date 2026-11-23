@@ -16,7 +16,6 @@ export const isSupabaseConfigured = Boolean(
 
 // In-memory store fallback when Supabase table is not yet created
 declare global {
-  // eslint-disable-next-line no-var
   var __mockPostsStore: BlogPost[] | undefined;
 }
 

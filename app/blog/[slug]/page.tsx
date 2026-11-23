@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calendar, Clock, History } from "lucide-react";
-import { getPostBySlug } from "@/lib/supabase";
+import { cache } from "react";
+import { getPostBySlug as fetchPostBySlug } from "@/lib/supabase";
 import { getPostSummaries } from "@/lib/post-summaries";
 import MarkdownContent from "@/components/MarkdownContent";
 import ShareBar from "@/components/ShareBar";
@@ -10,16 +10,25 @@ import RelatedPosts from "@/components/RelatedPosts";
 import { getRelatedPosts } from "@/lib/related";
 import SmartImage from "@/components/SmartImage";
 import AuthorAvatar from "@/components/AuthorAvatar";
+import Kicker from "@/components/blog/Kicker";
+import AuthorBox from "@/components/blog/AuthorBox";
+import TocRail from "@/components/blog/TocRail";
+import AdSlot, { adSlotEnabled } from "@/components/ads/AdSlot";
+import { formatDate } from "@/lib/format";
+import type { BlogPostSummary } from "@/types/blog";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { postTitleTag } from "@/lib/title-tag";
 import { categorySlug } from "@/lib/blog-index";
 import { absoluteUrl, authorName, authorPagePath } from "@/lib/site";
 import { faqJsonLd } from "@/lib/faq";
 import { getHubForPost } from "@/lib/hubs";
-import { extractHeadings } from "@/lib/toc";
-import TableOfContents from "@/components/TableOfContents";
+import { extractHeadings, slugifyHeading, type TocHeading } from "@/lib/toc";
+import TableOfContents, { MIN_TOC_SECTIONS } from "@/components/TableOfContents";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
+
+/** generateMetadata and the page share one database read per request. */
+const getPostBySlug = cache(fetchPostBySlug);
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -115,18 +124,9 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
 
-  // Dates are shown in India time so a post published late at night IST doesn't
-  // show the previous day (the server renders in UTC).
-  const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      timeZone: "Asia/Kolkata",
-    });
-  const formattedDate = formatDate(post.created_at);
   const modifiedAt = post.updated_at || post.created_at;
-  const formattedUpdated = formatDate(modifiedAt);
+  // Show "Updated" only when the edit is on a later day than publishing.
+  const showUpdated = formatDate(modifiedAt, "long") !== formatDate(post.created_at, "long");
   const hub = getHubForPost(post.slug);
 
   const articleUrl = `${siteUrl}/blog/${post.slug}`;
@@ -179,6 +179,13 @@ export default async function BlogPostPage({ params }: PageProps) {
   // FAQPage structured data, built from the "## FAQs" section of the post.
   const faqLd = faqJsonLd(post.content, articleUrl);
 
+  const headings = extractHeadings(post.content);
+  const sections = headings.filter((h) => h.depth === 2);
+  const hasToc = sections.length >= MIN_TOC_SECTIONS;
+  const [bodyStart, bodyRest] = splitForInArticleAd(post.content, headings);
+  const { newer, older } = neighboursInCategory(post.slug, post.category, allPosts);
+  const catSlug = post.category ? categorySlug(post.category) : undefined;
+
   return (
     <>
       {/* Schema.org Article Structured Data for Google */}
@@ -193,158 +200,219 @@ export default async function BlogPostPage({ params }: PageProps) {
         />
       )}
 
-      <main>
-      <article className="min-h-screen py-10 sm:py-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          {/* Breadcrumbs (also emitted as BreadcrumbList structured data) */}
-          <div className="mb-8">
-            <Breadcrumbs
-              siteUrl={siteUrl}
-              items={[
-                { name: "Home", href: "/" },
-                { name: "Blog", href: "/blog" },
-                ...(post.category
-                  ? [{ name: post.category, href: `/blog/category/${categorySlug(post.category)}` }]
-                  : []),
-                { name: post.title },
-              ]}
-            />
-          </div>
+      {/* Reading progress: pure CSS (scroll-driven animation), hidden where unsupported. */}
+      <div className="reading-progress" aria-hidden="true" />
 
-          {/* Topic guide this post belongs to (pillar-cluster internal link) */}
-          {hub && (
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">
-              <Link href={`/blog/topics/${hub.slug}`} className="hover:underline underline-offset-2">
-                Part of our guide: {hub.name}
-              </Link>
-            </p>
-          )}
-
-          {/* Post Title */}
-          <h1 className="text-3xl sm:text-5xl font-serif font-black tracking-tight text-zinc-900 dark:text-white leading-[1.15]">
-            {post.title}
-          </h1>
-
-          {/* Excerpt */}
-          {post.excerpt && (
-            <p className="mt-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed font-normal">
-              {post.excerpt}
-            </p>
-          )}
-
-          {/* Author & Metadata Row */}
-          <div className="mt-8 py-5 border-y border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <AuthorAvatar
-                name={post.author_name}
-                avatar={post.author_avatar}
-                size={40}
-                className="w-10 h-10 rounded-full ring-2 ring-rose-500/20 bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300"
-                textClassName="text-sm"
+      <main data-cat={catSlug}>
+        <article className="pb-16">
+          <header className="container-kz pt-6 sm:pt-8">
+            <div className="mx-auto max-w-[46rem]">
+              {/* Breadcrumbs (also emitted as BreadcrumbList structured data) */}
+              <Breadcrumbs
+                siteUrl={siteUrl}
+                items={[
+                  { name: "Home", href: "/" },
+                  { name: "Blog", href: "/blog" },
+                  ...(post.category
+                    ? [{ name: post.category, href: `/blog/category/${categorySlug(post.category)}` }]
+                    : []),
+                  { name: post.title },
+                ]}
               />
-              <div>
-                <p className="text-sm font-semibold text-zinc-900 dark:text-white">
-                  {isSiteAuthor ? (
-                    <Link href={authorPagePath} rel="author" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
-                      {post.author_name}
-                    </Link>
-                  ) : (
-                    post.author_name
-                  )}
-                </p>
-                <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />{" "}
-                    <time dateTime={post.created_at}>{formattedDate}</time>
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {post.reading_time} min read
-                  </span>
+
+              <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <Kicker category={post.category} />
+                {/* Topic guide this post belongs to (pillar-cluster internal link) */}
+                {hub && (
+                  <Link href={`/blog/topics/${hub.slug}`} className="kicker text-muted hover:text-ink">
+                    · Part of the guide: <span className="underline underline-offset-2">{hub.name}</span>
+                  </Link>
+                )}
+              </div>
+
+              <h1 className="text-display mt-3 text-balance text-ink">{post.title}</h1>
+
+              {post.excerpt && (
+                <p className="mt-4 text-pretty text-lg leading-relaxed text-muted sm:text-xl">{post.excerpt}</p>
+              )}
+
+              {/* Byline */}
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-y border-line py-4">
+                <div className="flex items-center gap-3">
+                  <AuthorAvatar
+                    name={post.author_name}
+                    avatar={post.author_avatar}
+                    size={40}
+                    className="h-10 w-10 rounded-full bg-brand-soft text-brand"
+                    textClassName="text-sm"
+                  />
+                  <div className="text-sm leading-snug">
+                    <p className="font-semibold text-ink">
+                      By{" "}
+                      {isSiteAuthor ? (
+                        <Link href={authorPagePath} rel="author" className="hover:text-brand">
+                          {post.author_name}
+                        </Link>
+                      ) : (
+                        post.author_name
+                      )}
+                    </p>
+                    <p className="text-muted">
+                      <time dateTime={post.created_at}>{formatDate(post.created_at, "long")}</time>
+                      {showUpdated && (
+                        <>
+                          {" · Updated "}
+                          <time dateTime={modifiedAt}>{formatDate(modifiedAt, "long")}</time>
+                        </>
+                      )}
+                      {" · "}
+                      {post.reading_time} min read
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-0.5 flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-                  <History className="w-3 h-3" /> Last updated{" "}
-                  <time dateTime={modifiedAt}>{formattedUpdated}</time>
-                </p>
+                <ShareBar title={post.title} url={articleUrl} />
               </div>
             </div>
 
-            <ShareBar title={post.title} />
-          </div>
+            {/* Cover image: wider than the text column, shares a View Transition name with its card. */}
+            {post.cover_image && (
+              <figure className="mx-auto mt-8 max-w-[68rem]">
+                <div
+                  className="relative aspect-video overflow-hidden rounded-[var(--radius-lg)] bg-surface-2"
+                  style={{ viewTransitionName: `cover-${post.slug}` }}
+                >
+                  <SmartImage
+                    src={post.cover_image}
+                    alt={post.title}
+                    width={1600}
+                    height={900}
+                    sizes="(min-width: 1120px) 1088px, 100vw"
+                    loading="eager"
+                    fetchPriority="high"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </figure>
+            )}
+          </header>
 
-          {/* Cover Image */}
-          {post.cover_image && (
-            <div className="mt-8 rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg bg-zinc-100 dark:bg-zinc-800 aspect-video relative">
-              <SmartImage
-                src={post.cover_image}
-                alt={post.title}
-                width={1200}
-                height={675}
-                sizes="(min-width: 768px) 720px, 100vw"
-                loading="eager"
-                fetchPriority="high"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+          <div className="container-kz mt-10 grid gap-10 lg:grid-cols-[13rem_minmax(0,1fr)_13rem] xl:gap-14">
+            {/* Left rail: contents (desktop) */}
+            <div className="hidden lg:block">{hasToc && <TocRail headings={sections} />}</div>
 
-          {/* Jump links for long articles (renders nothing for short ones) */}
-          <TableOfContents headings={extractHeadings(post.content)} />
+            <div className="mx-auto w-full min-w-0 max-w-[var(--measure)]">
+              {/* Jump links for phones/tablets (renders nothing for short posts) */}
+              <TableOfContents headings={headings} className="mb-8 lg:hidden" />
 
-          {/* Rich Markdown Article Body */}
-          <div className="mt-10 sm:mt-12">
-            <MarkdownContent content={post.content} />
-          </div>
+              <MarkdownContent content={bodyStart} />
+              {bodyRest && (
+                <>
+                  <AdSlot placement="in_article" />
+                  <MarkdownContent content={bodyRest} />
+                </>
+              )}
 
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
-                Tagged Topics
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
-                  >
-                    #{tag}
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="mt-12 border-t border-line pt-6">
+                  <h2 className="kicker text-muted">Tagged</h2>
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <li key={tag} className="chip">
+                        #{tag}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="mt-10">
+                <AuthorBox name={post.author_name || authorName} avatar={post.author_avatar} />
+              </div>
+
+              {hub && (
+                <Link
+                  href={`/blog/topics/${hub.slug}`}
+                  className="arrow-nudge mt-6 flex items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-line p-5 hover:border-muted"
+                >
+                  <span>
+                    <span className="kicker block text-accent">Topic guide</span>
+                    <span className="mt-1 block font-semibold text-ink">{hub.name}: read the whole series in order</span>
                   </span>
-                ))}
+                  <span className="arrow text-xl text-muted" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              )}
+
+              <AdSlot placement="article_end" />
+            </div>
+
+            {/* Right rail: share (desktop) */}
+            <div className="hidden lg:block">
+              <div className="sticky top-24 space-y-3">
+                <p className="kicker text-muted">Share</p>
+                <ShareBar title={post.title} url={articleUrl} layout="stack" />
               </div>
             </div>
-          )}
+          </div>
+        </article>
 
+        <div className="container-kz">
           {/* Related articles: next step for readers, internal links for search engines */}
           <RelatedPosts posts={relatedPosts} />
 
-          {/* Bottom Navigation */}
-          <div className="mt-16 p-6 sm:p-8 rounded-3xl bg-zinc-100/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-            <div>
-              <h3 className="font-serif font-bold text-lg text-zinc-900 dark:text-white">
-                Thanks for reading Kali Zubaan
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-                Explore more articles in{" "}
-                <Link
-                  href={`/blog/category/${categorySlug(post.category)}`}
-                  className="font-semibold text-zinc-700 dark:text-zinc-300 underline decoration-rose-500/40 underline-offset-2 hover:text-rose-500 dark:hover:text-rose-400"
-                >
-                  {post.category}
-                </Link>{" "}
-                or return to the main publication feed.
-              </p>
-            </div>
-            <Link
-              href="/"
-              className="px-5 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-semibold text-xs hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors shrink-0 shadow-sm"
-            >
-              ← Back to All Stories
-            </Link>
-          </div>
+          {(newer || older) && post.category && (
+            <nav aria-label={`More in ${post.category}`} className="mt-14 grid gap-4 border-t border-line pt-8 sm:grid-cols-2">
+              {older ? (
+                <NeighbourLink post={older} label={`Previous in ${post.category}`} />
+              ) : (
+                <span />
+              )}
+              {newer && <NeighbourLink post={newer} label={`Next in ${post.category}`} align="right" />}
+            </nav>
+          )}
         </div>
-      </article>
       </main>
     </>
   );
+}
+
+function NeighbourLink({ post, label, align = "left" }: { post: BlogPostSummary; label: string; align?: "left" | "right" }) {
+  return (
+    <Link
+      href={`/blog/${post.slug}`}
+      className={`group block rounded-[var(--radius-lg)] p-4 hover:bg-surface ${align === "right" ? "sm:text-right" : ""}`}
+    >
+      <span className="kicker block text-muted">
+        {align === "right" ? `${label} →` : `← ${label}`}
+      </span>
+      <span className="mt-1.5 block font-semibold leading-snug text-ink group-hover:text-brand">{post.title}</span>
+    </Link>
+  );
+}
+
+/** The posts just before and after this one in the same category (by date). */
+function neighboursInCategory(slug: string, category: string, all: BlogPostSummary[]) {
+  const same = all
+    .filter((p) => p.category === category)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const i = same.findIndex((p) => p.slug === slug);
+  if (i === -1) return { newer: undefined, older: undefined };
+  return { newer: same[i - 1], older: same[i + 1] };
+}
+
+/**
+ * Split the body before its third section so one in-article ad can sit
+ * between sections. Only when that ad is configured, and only when every
+ * heading id is unique (rendering two halves restarts id de-duplication).
+ */
+function splitForInArticleAd(content: string, headings: TocHeading[]): [string, string | null] {
+  if (!adSlotEnabled("in_article")) return [content, null];
+  const h2s = headings.filter((h) => h.depth === 2);
+  if (h2s.length < 4) return [content, null];
+  if (headings.some((h) => h.id !== slugifyHeading(h.text))) return [content, null];
+  const lines = content.split(/\r?\n/);
+  const at = h2s[2].line - 1;
+  return [lines.slice(0, at).join("\n"), lines.slice(at).join("\n")];
 }
