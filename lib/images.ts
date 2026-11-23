@@ -70,3 +70,36 @@ export function supabaseImageUrl(src: string, width: number, quality = 75): stri
 export function supabaseImageSrcSet(src: string): string {
   return SUPABASE_IMAGE_WIDTHS.map((w) => `${supabaseImageUrl(src, w)} ${w}w`).join(", ");
 }
+
+/**
+ * Images uploaded through the compression pipeline are named
+ * `<stem>-kzv1-w<width>.webp` and have `-w320/-w480/-w800/-w1200` copies beside
+ * them (lib/image-pipeline.ts). Returns their srcset, or null for any other
+ * image (legacy uploads keep using Supabase transforms).
+ */
+const PIPELINE_RE = /^(.*-kzv1)-w(\d{2,5})\.webp$/;
+const PIPELINE_VARIANT_WIDTHS = [320, 480, 800, 1200];
+
+export function pipelineImage(src: string): { srcSet: string; widths: number[]; url: (w: number) => string; mainWidth: number } | null {
+  let url: URL;
+  try {
+    url = new URL(src, "http://local.invalid");
+  } catch {
+    return null;
+  }
+  const match = url.pathname.match(PIPELINE_RE);
+  if (!match) return null;
+  const mainWidth = Number(match[2]);
+  const widths = [...PIPELINE_VARIANT_WIDTHS.filter((w) => w < mainWidth), mainWidth];
+  const make = (w: number) => {
+    const u = new URL(url.toString());
+    u.pathname = `${match[1]}-w${w}.webp`;
+    return src.startsWith("/") ? u.pathname : u.toString();
+  };
+  return {
+    srcSet: widths.map((w) => `${make(w)} ${w}w`).join(", "),
+    widths,
+    url: make,
+    mainWidth,
+  };
+}

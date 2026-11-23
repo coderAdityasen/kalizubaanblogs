@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StaticPage from "@/components/StaticPage";
-import { absoluteUrl, legalLastUpdated, siteUrl } from "@/lib/site";
+import { legalLastUpdated, siteUrl, pageSocialMetadata } from "@/lib/site";
 
 const description =
   "Privacy Policy for Kali Zubaan: what data we collect, how cookies and Google advertising cookies are used, and how to opt out.";
@@ -9,8 +9,7 @@ const description =
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description,
-  alternates: { canonical: absoluteUrl("/privacy-policy") },
-  openGraph: { title: "Privacy Policy | Kali Zubaan", description, url: absoluteUrl("/privacy-policy") },
+  ...pageSocialMetadata({ title: "Privacy Policy | Kali Zubaan", description, path: "/privacy-policy" }),
 };
 
 export default function PrivacyPolicyPage() {

@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StaticPage from "@/components/StaticPage";
-import { absoluteUrl, legalLastUpdated } from "@/lib/site";
+import { legalLastUpdated, pageSocialMetadata } from "@/lib/site";
 
 const description = "Terms and Conditions for using the Kali Zubaan website and its content.";
 
 export const metadata: Metadata = {
   title: "Terms and Conditions",
   description,
-  alternates: { canonical: absoluteUrl("/terms") },
-  openGraph: { title: "Terms and Conditions | Kali Zubaan", description, url: absoluteUrl("/terms") },
+  ...pageSocialMetadata({ title: "Terms and Conditions | Kali Zubaan", description, path: "/terms" }),
 };
 
 export default function TermsPage() {

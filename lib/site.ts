@@ -69,3 +69,41 @@ export const staticPages = [
   { href: "/terms", label: "Terms" },
   { href: "/disclaimer", label: "Disclaimer" },
 ] as const;
+
+/** Site-wide share image (public/og-image.png). */
+export const defaultOgImage = { url: "/og-image.png", width: 1200, height: 630 } as const;
+
+/**
+ * Canonical + full Open Graph and Twitter tags for a simple page.
+ *
+ * Next.js replaces (does not merge) the root layout's `openGraph` and `twitter`
+ * objects when a page sets its own, so a page that only passes title,
+ * description and url loses og:image, og:type and og:site_name, and keeps the
+ * homepage's twitter:title/description. Shares on WhatsApp, Facebook, LinkedIn
+ * and X then show the wrong text with no image. Use this instead.
+ */
+export function pageSocialMetadata({
+  title,
+  description,
+  path,
+  type = "website",
+}: {
+  title: string;
+  description: string;
+  path: string;
+  type?: "website" | "profile";
+}) {
+  const url = absoluteUrl(path);
+  const images = [{ ...defaultOgImage, alt: title }];
+  return {
+    alternates: { canonical: url },
+    openGraph: { type, title, description, url, siteName, images },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description,
+      creator: "@kalizubaan",
+      images: [defaultOgImage.url],
+    },
+  };
+}

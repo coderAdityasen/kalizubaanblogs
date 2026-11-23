@@ -1,0 +1,124 @@
+/*
+ * Long-form reading styles (article bodies and static pages).
+ * The body font is a token: --font-article. Swap it to var(--font-sans) to
+ * drop the serif (see lib/design.ts ARTICLE_BODY_FONT).
+ */
+.prose-kz {
+  --font-article: var(--font-serif);
+  font-family: var(--font-article);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--text);
+  max-width: var(--measure);
+  overflow-wrap: break-word;
+}
+.prose-kz[data-font="sans"] { --font-article: var(--font-sans); line-height: 1.6; }
+
+.prose-kz > * + * { margin-top: 1.15em; }
+.prose-kz p { margin-block: 0; }
+.prose-kz > p + p,
+.prose-kz > * + p { margin-top: 1.15em; }
+
+.prose-kz h2,
+.prose-kz h3,
+.prose-kz h4 {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+.prose-kz h2 { font-size: var(--text-h2); line-height: 1.2; font-weight: 700; margin-top: 2em; margin-bottom: 0.5em; }
+.prose-kz h3 { font-size: var(--text-h3); line-height: 1.3; font-weight: 650; margin-top: 1.6em; margin-bottom: 0.4em; }
+.prose-kz h4 { font-size: 1.0625rem; font-weight: 650; margin-top: 1.4em; margin-bottom: 0.3em; }
+.prose-kz h2 + *, .prose-kz h3 + *, .prose-kz h4 + * { margin-top: 0; }
+
+.prose-kz a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, var(--brand) 45%, transparent);
+  transition: text-decoration-color var(--dur-fast) var(--ease-out);
+}
+.prose-kz a:hover { text-decoration-color: currentColor; }
+
+.prose-kz strong { color: var(--ink); font-weight: 650; }
+.prose-kz em { font-style: italic; }
+.prose-kz del { color: var(--muted); }
+
+.prose-kz ul, .prose-kz ol { padding-left: 1.4em; }
+.prose-kz ul { list-style: disc; }
+.prose-kz ol { list-style: decimal; }
+.prose-kz li { margin-top: 0.45em; padding-left: 0.2em; }
+.prose-kz li::marker { color: var(--muted); }
+
+.prose-kz blockquote {
+  border-left: 3px solid var(--brand);
+  padding: 0.25em 0 0.25em 1.1em;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.prose-kz hr { border: 0; border-top: 1px solid var(--line); margin-block: 2.5em; }
+
+.prose-kz figure { margin-block: 2em; }
+.prose-kz figure img { width: 100%; height: auto; border-radius: var(--radius-lg); background: var(--surface-2); }
+.prose-kz figcaption {
+  margin-top: 0.6em;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--muted);
+  text-align: center;
+}
+
+.prose-kz code:not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.prose-kz .table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-sans);
+  -webkit-overflow-scrolling: touch;
+}
+.prose-kz table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; line-height: 1.5; }
+.prose-kz thead { background: var(--surface-2); }
+.prose-kz th {
+  text-align: left; font-weight: 600; color: var(--ink); padding: 0.7em 0.9em;
+  border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+.prose-kz td { padding: 0.7em 0.9em; border-top: 1px solid var(--line); vertical-align: top; }
+.prose-kz tbody tr:first-child td { border-top: 0; }
+
+/* Static pages (About, legal) share the reading styles but in sans. */
+.prose-kz.prose-static { --font-article: var(--font-sans); font-size: var(--text-ui); line-height: 1.7; }
+.prose-kz.prose-static h2 { font-size: 1.375rem; }
+
+/* Markdown images sit inside <p>, so the figure is a block <span>. */
+.prose-kz .kz-figure { display: block; margin-block: 2em; }
+.prose-kz .kz-figure img { width: 100%; height: auto; border-radius: var(--radius-lg); background: var(--surface-2); }
+.prose-kz .kz-figure .kz-caption {
+  display: block; margin-top: 0.6em; font-family: var(--font-sans); font-size: 0.8125rem;
+  line-height: 1.45; color: var(--muted); text-align: center;
+}
+.prose-kz p:has(> .kz-figure:only-child) { margin-block: 0; }
+
+.prose-kz .code-block {
+  border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+  background: #0d1117; color: #e6edf3; font-family: var(--font-mono);
+}
+.prose-kz .code-block > span:first-child {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.4rem 0.9rem; font-size: 0.75rem; color: #9aa4b2; border-bottom: 1px solid #222a35;
+}
+.prose-kz .code-block code { background: none; border: 0; padding: 1rem; color: inherit; font-size: 0.85rem; border-radius: 0; }
+
+/* Headings clear the sticky header when jumped to. */
+.prose-kz [id] { scroll-margin-top: 5.5rem; }

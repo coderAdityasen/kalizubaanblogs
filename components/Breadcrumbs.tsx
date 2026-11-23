@@ -35,7 +35,7 @@ export default function Breadcrumbs({ items, siteUrl }: BreadcrumbsProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <nav aria-label="Breadcrumb" className="min-w-0">
-        <ol className="flex flex-wrap items-center gap-1 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+        <ol className="flex flex-wrap items-center gap-1 text-[0.8125rem] text-muted">
           {items.map((item, index) => {
             const isLast = index === items.length - 1;
             return (
@@ -43,16 +43,16 @@ export default function Breadcrumbs({ items, siteUrl }: BreadcrumbsProps) {
                 {item.href && !isLast ? (
                   <Link
                     href={item.href}
-                    className="font-semibold text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
+                    className="inline-flex min-h-6 items-center font-medium text-muted hover:text-ink transition-colors"
                   >
                     {item.name}
                   </Link>
                 ) : (
-                  <span aria-current="page" className="truncate max-w-[16rem] sm:max-w-md">
+                  <span aria-current="page" className="truncate max-w-[14rem] text-text sm:max-w-md">
                     {item.name}
                   </span>
                 )}
-                {!isLast && <ChevronRight aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />}
+                {!isLast && <ChevronRight aria-hidden="true" className="w-3.5 h-3.5 shrink-0 opacity-60" />}
               </li>
             );
           })}

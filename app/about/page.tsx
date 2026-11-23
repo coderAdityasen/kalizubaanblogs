@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import StaticPage from "@/components/StaticPage";
 import { BrandLockup } from "@/components/BrandLogo";
-import { absoluteUrl } from "@/lib/site";
+import { pageSocialMetadata } from "@/lib/site";
 
 const description =
   "About Kali Zubaan and its author Aditya Sen: an independent blog on personal finance, health, technology and everyday life.";
@@ -10,8 +10,7 @@ const description =
 export const metadata: Metadata = {
   title: "About",
   description,
-  alternates: { canonical: absoluteUrl("/about") },
-  openGraph: { title: "About | Kali Zubaan", description, url: absoluteUrl("/about") },
+  ...pageSocialMetadata({ title: "About | Kali Zubaan", description, path: "/about" }),
 };
 
 export default function AboutPage() {
