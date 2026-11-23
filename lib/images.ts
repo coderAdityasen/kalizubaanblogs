@@ -73,12 +73,12 @@ export function supabaseImageSrcSet(src: string): string {
 
 /**
  * Images uploaded through the compression pipeline are named
- * `<stem>-kzv1-w<width>.webp` and have `-w480/-w800/-w1200` copies beside
+ * `<stem>-kzv1-w<width>.webp` and have `-w320/-w480/-w800/-w1200` copies beside
  * them (lib/image-pipeline.ts). Returns their srcset, or null for any other
  * image (legacy uploads keep using Supabase transforms).
  */
 const PIPELINE_RE = /^(.*-kzv1)-w(\d{2,5})\.webp$/;
-const PIPELINE_VARIANT_WIDTHS = [480, 800, 1200];
+const PIPELINE_VARIANT_WIDTHS = [320, 480, 800, 1200];
 
 export function pipelineImage(src: string): { srcSet: string; widths: number[]; url: (w: number) => string; mainWidth: number } | null {
   let url: URL;

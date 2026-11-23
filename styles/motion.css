@@ -90,3 +90,18 @@ dialog.sheet::backdrop { background: rgb(4 10 24 / 0.45); backdrop-filter: blur(
   .reveal { animation: none !important; opacity: 1 !important; transform: none !important; }
   .card-lift:hover, .card-lift:hover .card-img { transform: none; }
 }
+
+/* Print: just the article. */
+@media print {
+  header.site-header, footer.site-footer, .reading-progress, nav[aria-label="In this article"],
+  aside[aria-label="Advertisement"], .no-print { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .prose-kz { max-width: none; font-size: 11.5pt; }
+  .prose-kz a { color: inherit; text-decoration: underline; }
+  .prose-kz a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+}
+
+/* Below-the-fold blocks: skip layout/paint (and their lazy images) until near the viewport. */
+.cv-auto { content-visibility: auto; contain-intrinsic-size: auto 640px; }
+@media print { .cv-auto { content-visibility: visible; } }
+.cv-card { contain-intrinsic-size: auto 420px; }

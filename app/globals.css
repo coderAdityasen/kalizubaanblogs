@@ -85,13 +85,16 @@
     padding-inline: var(--gutter);
   }
 
+  /* Small-caps style label. Sans on purpose: a mono kicker pulled a ~23 KB
+     font into every first view (it stays for code blocks only). */
   .kicker {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: var(--text-meta);
     line-height: 1.4;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
   }
 
   .text-display { font-size: var(--text-display); line-height: 1.04; letter-spacing: -0.025em; font-weight: 700; }

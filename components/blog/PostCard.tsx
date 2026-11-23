@@ -30,7 +30,12 @@ function Cover({ post, variant, priority, transitionName }: { post: BlogPostSumm
   const isThumb = variant === "compact" || variant === "row";
   return (
     <div
-      className={`overflow-hidden bg-surface-2 ${isThumb ? "aspect-[16/10] w-24 shrink-0 rounded-[var(--radius-sm)] sm:w-28" : "aspect-video rounded-[var(--radius-lg)]"}`}
+      className={`overflow-hidden bg-surface-2 ${isThumb ? "aspect-[16/10] w-24 shrink-0 rounded-[var(--radius-sm)] sm:w-28" : "aspect-video rounded-[var(--radius-lg)]"} ${
+        // The Latest river is text-only on phones: six thumbnails there were the
+        // biggest thing competing with the lead image on slow connections. A
+        // hidden lazy image is never downloaded.
+        variant === "row" ? "hidden sm:block" : ""
+      }`}
     >
       {post.cover_image ? (
         <SmartImage

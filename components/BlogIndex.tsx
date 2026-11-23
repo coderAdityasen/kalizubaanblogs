@@ -94,7 +94,7 @@ export default function BlogIndex({ title, intro, posts, pageInfo, categories, a
             {categories.map((cat) => (
               <li key={cat.slug} data-cat={cat.slug}>
                 <Link href={`/blog/category/${cat.slug}`} aria-current={activeCategory === cat.slug ? "page" : undefined} className={tab(activeCategory === cat.slug)}>
-                  {cat.name} <span className="font-mono text-xs text-muted">{cat.count}</span>
+                  {cat.name} <span className="text-xs tabular-nums text-muted">{cat.count}</span>
                 </Link>
               </li>
             ))}
@@ -121,7 +121,11 @@ export default function BlogIndex({ title, intro, posts, pageInfo, categories, a
             )}
             <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
               {gridPosts.map((post, index) => (
-                <PostCard key={post.id || post.slug} post={post} priority={!featured && index === 0} transitionName />
+                // Cards past the first row skip rendering until scrolled near, so their
+                // lazy images don't compete with the first view on slow phones.
+                <div key={post.id || post.slug} className={index >= 1 ? "cv-auto cv-card" : undefined}>
+                  <PostCard post={post} priority={!featured && index === 0} transitionName />
+                </div>
               ))}
             </div>
             <AdSlot placement="listing" />

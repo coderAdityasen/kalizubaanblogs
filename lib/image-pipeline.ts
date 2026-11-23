@@ -9,7 +9,7 @@ import sharp, { type Metadata, type Stats } from "sharp";
  * MAX_BYTES.
  *
  * File naming: `<stem>-kzv1-w<width>.webp`. The `-kzv1-` marker tells the
- * site (lib/images.ts) that `-w480/-w800/-w1200` copies exist next to it.
+ * site (lib/images.ts) that `-w320/-w480/-w800/-w1200` copies exist next to it.
  */
 
 /** Hard cap for any stored image. */
@@ -21,7 +21,7 @@ export const MAX_WIDTH = 1600;
 /** Tall infographics may be taller than wide. */
 export const MAX_HEIGHT = 2400;
 /** Responsive copies written alongside the main image (only those smaller than it). */
-export const VARIANT_WIDTHS = [480, 800, 1200] as const;
+export const VARIANT_WIDTHS = [320, 480, 800, 1200] as const;
 export const VARIANT_MARKER = "-kzv1";
 
 const PHOTO_QUALITY = 82;

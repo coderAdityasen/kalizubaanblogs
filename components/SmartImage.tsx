@@ -16,7 +16,7 @@ type SmartImageProps = Omit<ImageProps, "src" | "width" | "height"> & {
  */
 export default function SmartImage({ src, alt, width, height, sizes, loading, fetchPriority, className, ...rest }: SmartImageProps) {
   // Uploaded through the compression pipeline: pre-built WebP copies at
-  // 480/800/1200/full width, so no on-the-fly resizing (and no transform cost).
+  // 320/480/800/1200/full width, so no on-the-fly resizing (and no transform cost).
   const pipeline = pipelineImage(src);
   if (pipeline) {
     const imgSizes = sizes ?? `${width}px`;

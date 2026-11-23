@@ -12,7 +12,7 @@ import { moreNav, sectionNav } from "./nav";
  */
 export default function SiteHeader() {
   return (
-    <header className="header-scroll sticky top-0 z-50 border-b border-transparent bg-bg/90 backdrop-blur-md supports-[backdrop-filter]:bg-bg/80">
+    <header className="site-header header-scroll sticky top-0 z-50 border-b border-transparent bg-bg/90 backdrop-blur-md supports-[backdrop-filter]:bg-bg/80">
       <a
         href="#content"
         className="sr-only-focusable absolute left-4 top-3 z-50 rounded-md bg-brand px-3 py-2 text-sm font-semibold text-on-brand"

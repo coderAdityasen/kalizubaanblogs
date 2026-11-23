@@ -130,7 +130,7 @@ await check("Large JPEG (Bearer auth, folder=covers) -> 201 compressed WebP ≤ 
   assert.ok(body.size <= 1_000_000, `stored ${body.size} bytes`);
   assert.ok(body.width <= 1600);
   assert.equal(body.originalSize, noisyPhoto.length);
-  assert.deepEqual(Object.keys(body.variants).sort(), ["1200", "480", "800"]);
+  assert.deepEqual(Object.keys(body.variants).sort(), ["1200", "320", "480", "800"]);
   assert.match(body.url, /-kzv1-w1600\.webp$/);
   photo = body;
 });

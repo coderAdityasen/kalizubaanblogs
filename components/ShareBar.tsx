@@ -50,7 +50,7 @@ export default function ShareBar({ title, url, layout = "row" }: ShareBarProps) 
     "inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-muted hover:text-ink";
 
   return (
-    <div className={layout === "stack" ? "flex flex-col items-start gap-2" : "flex items-center gap-2"}>
+    <div className={`no-print ${layout === "stack" ? "flex flex-col items-start gap-2" : "flex items-center gap-2"}`}>
       {links.map((l) => (
         <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" aria-label={l.label} title={l.label} className={btn}>
           {l.icon}

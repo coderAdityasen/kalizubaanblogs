@@ -10,7 +10,7 @@ export default function RelatedPosts({ posts }: { posts: BlogPostSummary[] }) {
   if (posts.length === 0) return null;
 
   return (
-    <section aria-labelledby="related-heading" className="mt-4 pt-6">
+    <section aria-labelledby="related-heading" className="no-print cv-auto mt-4 pt-6">
       <SectionHeader id="related-heading" title="Keep reading" />
       <ul className="mt-6 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (

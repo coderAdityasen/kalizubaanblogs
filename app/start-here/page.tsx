@@ -50,7 +50,7 @@ export default async function StartHerePage() {
       </header>
 
       {sections.map((section) => (
-        <section key={section.slug} aria-labelledby={`sh-${section.slug}`} className="mt-14">
+        <section key={section.slug} aria-labelledby={`sh-${section.slug}`} className="cv-auto mt-14">
           <SectionHeader
             id={`sh-${section.slug}`}
             title={section.name}

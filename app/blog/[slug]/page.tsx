@@ -302,7 +302,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             <div className="mx-auto w-full min-w-0 max-w-[var(--measure)]">
               {/* Jump links for phones/tablets (renders nothing for short posts) */}
-              <TableOfContents headings={headings} className="mb-8 lg:hidden" />
+              <TableOfContents headings={headings} className="no-print mb-8 lg:hidden" />
 
               <MarkdownContent content={bodyStart} />
               {bodyRest && (

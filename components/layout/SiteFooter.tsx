@@ -27,7 +27,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 export default function SiteFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="mt-24 border-t border-line bg-surface">
+    <footer className="site-footer mt-24 border-t border-line bg-surface">
       <div className="container-kz grid gap-12 py-14 lg:grid-cols-[1.3fr_2fr]">
         <div className="max-w-sm">
           <Link href="/" className="inline-flex items-center gap-3" aria-label="Kali Zubaan home">

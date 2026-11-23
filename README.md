@@ -1,18 +1,19 @@
-# Chronicle — Modern API-First Blogging Platform
+# Kali Zubaan (kalizubaan.fun)
 
-> Built with **Next.js 16 (App Router)**, **Supabase (PostgreSQL & Row Level Security)**, **Tailwind CSS**, and **Secret Key REST API Authentication**.
+Plain-English explainers on personal finance, tech & AI, side hustles and health for readers in India.
+
+> **Next.js 16 (App Router)** · **React 19** · **Tailwind CSS v4** · **Supabase** (Postgres + Storage) · secret-key REST API for publishing · deployed on Vercel.
 
 ---
 
 ## ✨ Features
 
-- **🛡️ Secure Secret-Key API**: Publish, update, and manage blog posts programmatically via `POST /api/posts` using Bearer token or `x-api-key` authentication.
-- **⚡ Next.js App Router**: Lightning-fast edge rendering, dynamic routing, and partial pre-rendering.
-- **🐘 Supabase PostgreSQL Integration**: Fully typed database models with Row Level Security (RLS) guaranteeing safe public read access.
-- **✨ Hybrid Local Fallback**: Works immediately out of the box with zero external configuration! If Supabase keys aren't provided, it automatically runs in interactive demo mode.
-- **📝 Rich Markdown Engine**: Full GFM support with syntax-highlighted code blocks, copy-to-clipboard buttons, quotes, and responsive images.
-- **🔍 Realtime Search & Category Filtering**: Filter articles by categories (Tech, AI, Architecture, Full Stack) and live search by title, tags, or author.
-- **🧪 In-Browser API Playground**: Navigate to [`/api-docs`](http://localhost:3000/api-docs) to test API requests with your secret key directly in the UI!
+- **Editorial design system** (Nov 2026 redesign, see [`docs/redesign/`](./docs/redesign/ARCHITECTURE.md)): design tokens in `styles/tokens.css`, light/dark theme that follows the system setting with a toggle (no flash, works without JS), Geist for UI and Source Serif 4 for article bodies, one accent colour per section.
+- **Pages**: homepage (lead story + "Latest" river + section blocks), `/blog` and category archives, topic hubs, article page (TOC rail, reading progress, share bar, author box, related + previous/next), `/start-here`, `/search` (server-rendered, no JS needed), author, About/Contact/legal, 404.
+- **Secure secret-key API**: create, update and list posts and upload images (`/api/posts`, `/api/posts/<slug>`, `/api/upload`) with `Authorization: Bearer` or `x-api-key`. Constant-time key comparison; in production a missing `BLOG_API_SECRET` rejects every write.
+- **Image pipeline**: every upload is converted to WebP, capped at 1600×2400 and **guaranteed ≤ 1 MB**, with 320/480/800/1200 px variants that pages serve through `srcset`.
+- **SEO**: BlogPosting/FAQPage/BreadcrumbList/CollectionPage/ItemList/Person JSON-LD, WebSite SearchAction, image sitemap, RSS feed, canonical + Open Graph on every page, ISR with instant refresh on publish.
+- **Performance**: server-rendered Markdown (no markdown JS in the browser), CSS-only motion (View Transitions, scroll-driven effects; all off under `prefers-reduced-motion`), space reserved for every image and ad slot.
 
 ---
 
@@ -36,7 +37,7 @@ Visit [http://localhost:3000](http://localhost:3000) to view the blogging websit
 - `Content-Type: application/json`
 - `Authorization: Bearer <BLOG_API_SECRET>` *(or `x-api-key: <BLOG_API_SECRET>`)*
 
-> Default Secret Key in `.env.local`: `my-super-secret-key-12345`
+> Locally, if `BLOG_API_SECRET` is not set, the dev-only key `demo-secret-key-12345` works. In production it never does: set `BLOG_API_SECRET` in Vercel.
 
 ### Sample JSON Blog Post Payload (`demo-post.json`):
 ```json
@@ -64,7 +65,7 @@ node scripts/send-demo-post.mjs
 ### Option B: Using cURL
 ```bash
 curl -X POST http://localhost:3000/api/posts \
-  -H "Authorization: Bearer my-super-secret-key-12345" \
+  -H "Authorization: Bearer demo-secret-key-12345" \
   -H "Content-Type: application/json" \
   -d @demo-post.json
 ```
@@ -72,7 +73,7 @@ curl -X POST http://localhost:3000/api/posts \
 ### Option C: Using PowerShell
 ```powershell
 $headers = @{
-    "Authorization" = "Bearer my-super-secret-key-12345"
+    "Authorization" = "Bearer demo-secret-key-12345"
     "Content-Type"  = "application/json"
 }
 $body = Get-Content -Raw -Path "demo-post.json"
@@ -104,8 +105,27 @@ Optional database migration: [`supabase/migrations/20261028_posts_updated_at.sql
 adds a trigger so `updated_at` also changes when a post is edited in the Supabase
 dashboard. Safe to re-run; run it once in the Supabase SQL Editor.
 
-### Option D: Using the In-Browser Tester
-Open [http://localhost:3000/api-docs](http://localhost:3000/api-docs), enter your secret key, tweak the JSON if desired, and click **"Send POST Request"**.
+### Uploading images: `POST /api/upload`
+
+`multipart/form-data` with a `file` field (JPEG, PNG, WebP, AVIF or GIF; **SVG is rejected**), same auth headers. Optional fields: `folder` (default `uploads`), `bucket` (default `blog-images`), `optimize=false` (keep the original bytes; only allowed when the file is already ≤ 1 MB).
+
+The response keeps every field it had before (`success`, `message`, `url`, `path`, `bucket`, `filename`, `originalName`, `size`, `contentType`, `storage`) and adds:
+
+| Field | Meaning |
+| --- | --- |
+| `originalSize` | bytes received |
+| `width`, `height`, `format` | the stored main image (normally `webp`) |
+| `optimized`, `savedPercent` | whether the pipeline re-encoded it, and how much smaller it got |
+| `variants` | `{ "320": url, "480": url, "800": url, "1200": url }` (smaller widths only) |
+
+`url` is always ≤ 1,000,000 bytes. Files are named `<stem>-kzv1-w<width>.webp`; the `-kzv1-` marker lets pages build a `srcset` from any of them.
+
+### API changes in the Nov 2026 redesign (all backward compatible)
+
+- `GET /api/posts` now returns post **summaries** (no `content`) and is CDN-cached for 10 minutes; add `?include=content` for full posts (not cached).
+- `POST`/`PATCH` refresh every page that lists the post (home, archives, categories, hubs, sitemap, feed, search, start-here, author).
+- `/api/upload`: the new response fields above; SVG and non-image files are rejected with `400` ("Invalid File Type"); an image that cannot be brought under 1 MB returns `422`.
+- Run `node scripts/test-api-contract.mjs` against a local server to check all of this (it refuses to run against the live site).
 
 ---
 
@@ -171,37 +191,52 @@ The source letterforms and genie details are preserved rather than auto-traced t
 
 ---
 
+## Configuration (environment variables)
+
+| Variable | Needed for |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | posts + image storage |
+| `BLOG_API_SECRET` | the write API (required in production) |
+| `NEXT_PUBLIC_SITE_URL` | canonical URLs (defaults to `https://www.kalizubaan.fun`) |
+| `NEWSLETTER_WEBHOOK_URL` | *optional.* Newsletter sign-ups are POSTed here as JSON `{ email, source, ts }` (works with Zapier/Make/Buttondown/ConvertKit webhooks). Until it is set, the form shows "Email sign-ups aren't open yet" and points to the RSS feed; it never pretends to subscribe anyone. Handler: `lib/newsletter.ts`. |
+| `NEXT_PUBLIC_ADSENSE_CLIENT` | *optional.* `ca-pub-…`. Loads the AdSense script (lazily) once set. |
+| `NEXT_PUBLIC_ADSENSE_SLOT_HOME`, `…_LISTING`, `…_IN_ARTICLE`, `…_ARTICLE_END` | *optional.* Ad unit ids per placement. A placement renders nothing until both the client id and its slot id are set; its space is reserved so ads never shift the page. |
+
+## Checks and maintenance scripts
+
+```bash
+npx tsc --noEmit && npm run lint && npm run build
+node scripts/test-api-contract.mjs                      # API contract (local server only)
+node scripts/seo-parity.mjs http://localhost:3001 http://localhost:3000   # compare head tags/JSON-LD/sitemap of two builds
+BLOG_API_SECRET=... node scripts/backfill-image-variants.mjs --base=https://www.kalizubaan.fun [--apply] [--limit=20]
+```
+
+`backfill-image-variants.mjs` re-uploads old covers through the pipeline (WebP ≤ 1 MB + variants) and points each post at its new cover. It is a dry run unless you pass `--apply`; run it in batches when the Supabase quota has room.
+
+Tune the design in one place: `styles/tokens.css` (colours, type scale, spacing, motion), `lib/design.ts` (default theme, article font, section names/taglines), `lib/start-here.ts` (hand-picked Start here posts).
+
+---
+
 ## 📂 Project Structure
 
 ```
 ├── app/
-│   ├── api/
-│   │   └── posts/
-│   │       ├── route.ts          # POST (create with secret key) & GET posts
-│   │       └── [slug]/route.ts   # GET single post by slug
-│   ├── api-docs/
-│   │   └── page.tsx              # Interactive API Docs & Live Tester
-│   ├── blog/
-│   │   └── [slug]/
-│   │       └── page.tsx          # Dynamic blog post page with Markdown
-│   ├── layout.tsx                # Root layout with Navbar & Footer
-│   ├── page.tsx                  # Home page with Featured & Grid view
-│   └── globals.css               # Tailwind styling & dark mode
+│   ├── api/posts/, api/upload/, api/newsletter/   # write API, uploads, newsletter
+│   ├── blog/[slug]/          # article page
+│   ├── blog/, blog/category/, blog/topics/        # archives, sections, topic hubs
+│   ├── start-here/, search/, author/, about/ …    # other pages
+│   ├── sitemap.xml/, feed.xml/                    # crawl files (ISR)
+│   ├── layout.tsx            # fonts, theme script, header/footer, JSON-LD
+│   └── globals.css           # Tailwind v4 + component classes
+├── styles/                   # tokens.css, prose.css, motion.css
 ├── components/
-│   ├── ApiPlayground.tsx         # In-browser live testing suite
-│   ├── BlogList.tsx              # Search & category filtering
-│   ├── MarkdownContent.tsx       # Markdown renderer with code copy
-│   ├── Navbar.tsx                # Sleek top navigation
-│   ├── Footer.tsx                # Site footer
-│   ├── PostCard.tsx              # Modern card component
-│   └── ShareBar.tsx              # Social sharing & copy link
-├── lib/
-│   ├── sample-data.ts            # High quality sample demo posts
-│   └── supabase.ts               # Supabase client + local fallback engine
-├── scripts/
-│   └── send-demo-post.mjs        # Executable test script
-├── supabase/
-│   └── schema.sql                # Complete Supabase PostgreSQL schema & RLS
-├── demo-post.json                # Sample demo post JSON file
-└── .env.local                    # Local environment secrets
+│   ├── layout/               # SiteHeader, SiteFooter, NavLinks, MobileNav
+│   ├── blog/                 # PostCard, Kicker, SectionHeader, AuthorBox, TocRail, NewsletterForm
+│   ├── ads/                  # AdSlot (inert until configured)
+│   ├── ui/                   # ThemeScript, ThemeToggle
+│   └── MarkdownContent.tsx   # server-side Markdown renderer
+├── lib/                      # data access, image pipeline, auth, revalidation, SEO helpers
+├── scripts/                  # contract test, SEO parity, backfill, demo post
+├── docs/redesign/            # research, architecture, screenshots
+└── supabase/                 # schema + migrations
 ```

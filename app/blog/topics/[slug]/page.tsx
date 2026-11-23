@@ -109,7 +109,7 @@ export default async function TopicHubPage({ params }: PageProps) {
             <ol className="divide-y divide-line border-y border-line">
               {toSummaries(clusterPosts).map((post, index) => (
                 <li key={post.slug} className="flex items-start gap-5">
-                  <span aria-hidden="true" className="pt-5 font-mono text-sm font-semibold text-brand tabular-nums">
+                  <span aria-hidden="true" className="pt-5 text-sm font-bold text-brand tabular-nums">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0 flex-1">

@@ -104,7 +104,7 @@ export default async function HomePage() {
       {/* One block per section */}
       <div className="container-kz mt-16 space-y-16 sm:mt-20 sm:space-y-20">
         {sections.map((section) => (
-          <section key={section.slug} aria-labelledby={`sec-${section.slug}`} className="reveal">
+          <section key={section.slug} aria-labelledby={`sec-${section.slug}`} className="reveal cv-auto">
             <SectionHeader
               id={`sec-${section.slug}`}
               title={section.name}
@@ -129,7 +129,7 @@ export default async function HomePage() {
 
       {/* Topic guides */}
       {hubs.map(({ hub, pillar, posts: hubPosts }) => (
-        <section key={hub.slug} aria-labelledby={`hub-${hub.slug}`} className="reveal mt-20 bg-surface-2 py-14">
+        <section key={hub.slug} aria-labelledby={`hub-${hub.slug}`} className="reveal cv-auto mt-20 bg-surface-2 py-14">
           <div className="container-kz grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
             <div>
               <p className="kicker text-brand">Topic guide</p>
@@ -145,7 +145,7 @@ export default async function HomePage() {
               {[...(pillar ? [pillar] : []), ...hubPosts].map((post, i) => (
                 <li key={post.slug}>
                   <Link href={`/blog/${post.slug}`} className="card-surface card-lift group flex items-start gap-4 p-4 sm:p-5">
-                    <span className="font-mono text-sm font-semibold text-brand tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="text-sm font-bold text-brand tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                     <span className="min-w-0">
                       <span className="block font-semibold leading-snug text-ink group-hover:text-brand transition-colors">{post.title}</span>
                       <span className="kicker mt-1 block text-muted">
@@ -162,7 +162,7 @@ export default async function HomePage() {
       ))}
 
       {/* Start here + newsletter */}
-      <section aria-labelledby="start-here-heading" className="reveal container-kz mt-20">
+      <section aria-labelledby="start-here-heading" className="reveal cv-auto container-kz mt-20">
         <SectionHeader id="start-here-heading" title="New here? Start with these" href="/start-here" linkLabel="Start here" />
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {startHere.map(({ section, post }) => (
@@ -174,7 +174,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="newsletter-heading" className="reveal container-kz mt-20">
+      <section aria-labelledby="newsletter-heading" className="reveal cv-auto container-kz mt-20">
         <div className="grid gap-8 rounded-[var(--radius-lg)] border border-line bg-surface p-6 sm:p-10 md:grid-cols-[1fr_1fr] md:items-center">
           <div>
             <p className="kicker text-brand">Newsletter</p>

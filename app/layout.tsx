@@ -37,7 +37,9 @@ const geistMono = Geist_Mono({
 const sourceSerif = Source_Serif_4({
   variable: "--font-source-serif",
   subsets: ["latin"],
-  style: ["normal", "italic"],
+  // Upright only: the italic file is another ~50 KB for the odd disclaimer or
+  // emphasis, which the browser can slant itself.
+  style: ["normal"],
   display: "swap",
   preload: false,
   adjustFontFallback: true,
