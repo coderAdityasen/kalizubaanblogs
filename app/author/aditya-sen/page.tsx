@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getPostSummaries } from "@/lib/post-summaries";
 import { getCategories } from "@/lib/blog-index";
 import { author, authorSameAs } from "@/lib/author";
-import { absoluteUrl, authorName, contactEmail, siteName } from "@/lib/site";
+import { absoluteUrl, authorName, contactEmail, pageSocialMetadata, siteName } from "@/lib/site";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
@@ -15,8 +15,12 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `${authorName}, Author`,
   description,
-  alternates: { canonical: pageUrl },
-  openGraph: { type: "profile", title: `${authorName} | ${siteName}`, description, url: pageUrl },
+  ...pageSocialMetadata({
+    type: "profile",
+    title: `${authorName} | ${siteName}`,
+    description,
+    path: author.path,
+  }),
 };
 
 /** Visible only in `npm run dev`: shows Aditya what still needs filling in. Hidden in production. */

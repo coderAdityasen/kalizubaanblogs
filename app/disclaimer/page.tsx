@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StaticPage from "@/components/StaticPage";
-import { absoluteUrl, legalLastUpdated } from "@/lib/site";
+import { legalLastUpdated, pageSocialMetadata } from "@/lib/site";
 
 const description =
   "Disclaimer: Kali Zubaan content is for informational purposes only and is not financial, investment, medical, or health advice.";
@@ -9,8 +9,7 @@ const description =
 export const metadata: Metadata = {
   title: "Disclaimer",
   description,
-  alternates: { canonical: absoluteUrl("/disclaimer") },
-  openGraph: { title: "Disclaimer | Kali Zubaan", description, url: absoluteUrl("/disclaimer") },
+  ...pageSocialMetadata({ title: "Disclaimer | Kali Zubaan", description, path: "/disclaimer" }),
 };
 
 export default function DisclaimerPage() {
