@@ -24,6 +24,7 @@ import { faqJsonLd } from "@/lib/faq";
 import { getHubForPost } from "@/lib/hubs";
 import { extractHeadings, slugifyHeading, type TocHeading } from "@/lib/toc";
 import TableOfContents, { MIN_TOC_SECTIONS } from "@/components/TableOfContents";
+import { paramsOrNone } from "@/lib/build-safe";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
@@ -42,11 +43,12 @@ interface PageProps {
  */
 export const revalidate = 86400;
 
+// If Supabase can't be read at build time, prebuild no articles: each one
+// renders on its first request instead of failing the deployment.
 export async function generateStaticParams() {
-  const posts = await getPostSummaries();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  return paramsOrNone("/blog/[slug] params", async () =>
+    (await getPostSummaries()).map((post) => ({ slug: post.slug }))
+  );
 }
 
 /**

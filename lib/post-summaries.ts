@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { BlogPostSummary } from "@/types/blog";
 import { getPosts, isSupabaseConfigured } from "@/lib/supabase";
 import { toSummaries } from "@/lib/blog-index";
+import { deferToRequestDuringBuild, withTimeout } from "@/lib/build-safe";
 
 /**
  * Every column that post cards, archives, the feed and "Keep reading" need:
@@ -25,8 +26,8 @@ const TABLE_MISSING = "PGRST205";
  * posts API also clears it (Next tags fetches with the paths that used them),
  * so a newly published post still shows up straight away.
  */
-const cachedFetch: typeof fetch = (input, init) =>
-  fetch(input, { ...init, next: { revalidate: LIST_CACHE_SECONDS, tags: ["posts"] } });
+const cachedFetch: typeof fetch = withTimeout((input, init) =>
+  fetch(input, { ...init, next: { revalidate: LIST_CACHE_SECONDS, tags: ["posts"] } }));
 
 function getListClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -49,6 +50,8 @@ function getListClient() {
  *
  * Throws if Supabase answers with an error, so an ISR regeneration fails and
  * Next keeps serving the last good page rather than caching an empty list.
+ * During `next build` the page is deferred to request time instead, so a
+ * Supabase outage can't fail the deployment (see lib/build-safe.ts).
  */
 export const getPostSummaries = cache(async (): Promise<BlogPostSummary[]> => {
   const supabase = getListClient();
@@ -60,7 +63,10 @@ export const getPostSummaries = cache(async (): Promise<BlogPostSummary[]> => {
       .order("created_at", { ascending: false });
     if (!error) return (data ?? []) as BlogPostSummary[];
     if (error.code !== TABLE_MISSING) {
-      throw new Error(`Supabase read failed (post list): ${error.message}`);
+      return deferToRequestDuringBuild(
+        "post list",
+        new Error(`Supabase read failed (post list): ${error.message}`)
+      );
     }
   }
   // No Supabase configured, or the posts table is not created yet: sample posts
