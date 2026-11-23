@@ -230,18 +230,18 @@ Response stays backward compatible — same fields (`success`, `message`, `url`,
 
 ## 10. SEO checklist (must stay identical or better)
 
-- [ ] Every existing URL returns 200 with the same canonical (`https://www.kalizubaan.fun/...`), including `/blog/page/N`, category pages and hubs; no new trailing-slash or redirect changes.
-- [ ] `<html lang="en-IN">`, `og:locale en_IN` (PR #43).
-- [ ] Titles via the title helper (PR #45): full brand suffix when it fits, short suffix, or none; `title.template`.
-- [ ] Meta descriptions (post excerpt; per-page for static pages), keywords, `robots` (index, follow, `max-image-preview:large`); 404 is `noindex, follow` (PR #41).
-- [ ] Open Graph + Twitter cards on every page incl. static pages (PR #42), `siteName: Kali Zubaan`, OG image 1200×630 fallback.
-- [ ] JSON-LD: WebSite (+ `SearchAction` once /search exists) and Organization (logo `/logo.png` 600×240) in layout; BlogPosting (headline, image, datePublished, dateModified, author Person with url → author page, publisher, mainEntityOfPage, inLanguage) on posts; BreadcrumbList on posts, archives, categories, hubs, author (PR #44); CollectionPage + ItemList on archives/hubs; ProfilePage on author; FAQPage where the post has an FAQ section.
-- [ ] Visible breadcrumbs matching the BreadcrumbList.
-- [ ] One `<h1>` per page; heading order intact; TOC anchor IDs unchanged (`lib/toc.ts`), so existing `#section` links keep working.
-- [ ] `/sitemap.xml` route handler (all posts with `lastmod` = `updated_at`, archives, categories, hubs, author, static pages, + `/start-here`), `/feed.xml` RSS (en-IN), `<link rel="alternate" type="application/rss+xml">`, `robots.txt` (only `/api/` disallowed; `/search` added as `noindex` via meta rather than robots so links are still followed).
-- [ ] Favicon/icons/manifest/brand logos unchanged (Google site name "Kali Zubaan").
-- [ ] Internal links same-tab, external links `rel="noopener noreferrer"`; image `alt` = caption or title.
-- [ ] **Parity script** (`scripts/seo-parity.mjs`): crawls a list of ~30 URLs on `main`'s build and on `grok`'s build and diffs title, description, canonical, robots, og:*, twitter:*, JSON-LD types/fields, h1, hreflang/lang, status codes, sitemap URL set and feed item set. Must show zero regressions before the PR leaves draft.
+- [x] Every existing URL returns 200 with the same canonical (`https://www.kalizubaan.fun/...`), including `/blog/page/N`, category pages and hubs; no new trailing-slash or redirect changes.
+- [x] `<html lang="en-IN">`, `og:locale en_IN` (PR #43).
+- [x] Titles via the title helper (PR #45): full brand suffix when it fits, short suffix, or none; `title.template`.
+- [x] Meta descriptions (post excerpt; per-page for static pages), keywords, `robots` (index, follow, `max-image-preview:large`); 404 is `noindex, follow` (PR #41).
+- [x] Open Graph + Twitter cards on every page incl. static pages (PR #42), `siteName: Kali Zubaan`, OG image 1200×630 fallback.
+- [x] JSON-LD: WebSite (+ `SearchAction` once /search exists) and Organization (logo `/logo.png` 600×240) in layout; BlogPosting (headline, image, datePublished, dateModified, author Person with url → author page, publisher, mainEntityOfPage, inLanguage) on posts; BreadcrumbList on posts, archives, categories, hubs, author (PR #44); CollectionPage + ItemList on archives/hubs; ProfilePage on author; FAQPage where the post has an FAQ section.
+- [x] Visible breadcrumbs matching the BreadcrumbList.
+- [x] One `<h1>` per page; heading order intact; TOC anchor IDs unchanged (`lib/toc.ts`), so existing `#section` links keep working.
+- [x] `/sitemap.xml` route handler (all posts with `lastmod` = `updated_at`, archives, categories, hubs, author, static pages, + `/start-here`), `/feed.xml` RSS (en-IN), `<link rel="alternate" type="application/rss+xml">`, `robots.txt` (only `/api/` disallowed; `/search` added as `noindex` via meta rather than robots so links are still followed).
+- [x] Favicon/icons/manifest/brand logos unchanged (Google site name "Kali Zubaan").
+- [x] Internal links same-tab, external links `rel="noopener noreferrer"`; image `alt` = caption or title.
+- [x] **Parity script** (`scripts/seo-parity.mjs`): crawls a list of ~30 URLs on `main`'s build and on `grok`'s build and diffs title, description, canonical, robots, og:*, twitter:*, JSON-LD types/fields, h1, hreflang/lang, status codes, sitemap URL set and feed item set. Must show zero regressions before the PR leaves draft.
 
 ---
 
@@ -301,3 +301,16 @@ All phases push to `grok`; the draft PR stays open until Phase 5 passes. Each ph
 7. **The fake newsletter form** (no backend today): remove it, or connect a real service (e.g. Buttondown/Substack). Proposal: replace with "Follow via RSS / Start here" until a real service exists.
 8. **Next.js security upgrade** (16.4.3 is flagged by `next build`): do it as part of Phase 1 on `grok`, or as a separate small PR to `main` first (recommended, so production gets the fix sooner).
 9. **Supabase quota**: the live site stays broken until the quota is restored (upgrade/spend cap/reset). The redesign reduces egress but can't restore service.
+
+---
+
+## 14. Status (23 Nov 2026)
+
+Phases 1–5 are built on `grok`. Results are in [RESULTS.md](./RESULTS.md) and screenshots in [screenshots/](./screenshots/). Decisions applied: theme follows the system setting, with a toggle; serif article body (upright only); SVG uploads rejected; newsletter form kept and ready to connect (`NEWSLETTER_WEBHOOK_URL`); Next.js upgraded to 16.4.6; PRs #41–#48 folded in. Changes from this plan:
+- Kickers use Geist (sans), not mono, to keep a 23 KB font off every first view.
+- Pipeline variants are 320/480/800/1200 (320 added for thumbnails).
+- The Latest river is text-only on phones.
+- Below-the-fold blocks use `content-visibility: auto`.
+- Search is a server-rendered page with no client dialog.
+
+Still open: in lab simulation, mobile LCP is 2.5–3.5 s, which misses the 2.5 s budget even though every page improved on main; font weight on articles (~136 KB) is over budget; and the real-device / PSI / Rich Results passes need a deploy.

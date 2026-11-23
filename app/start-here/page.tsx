@@ -49,8 +49,8 @@ export default async function StartHerePage() {
         </p>
       </header>
 
-      {sections.map((section) => (
-        <section key={section.slug} aria-labelledby={`sh-${section.slug}`} className="cv-auto mt-14">
+      {sections.map((section, si) => (
+        <section key={section.slug} aria-labelledby={`sh-${section.slug}`} className={`${si > 0 ? "cv-auto " : ""}mt-14`}>
           <SectionHeader
             id={`sh-${section.slug}`}
             title={section.name}
@@ -60,9 +60,9 @@ export default async function StartHerePage() {
             cat={section.slug}
           />
           <ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-            {section.posts.map((post) => (
+            {section.posts.map((post, i) => (
               <li key={post.slug}>
-                <PostCard post={post} variant="standard" />
+                <PostCard post={post} variant="standard" priority={si === 0 && i === 0} />
               </li>
             ))}
           </ul>

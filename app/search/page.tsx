@@ -46,7 +46,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
         <ul className="mt-6 max-w-3xl divide-y divide-line border-y border-line">
           {results.map((post) => (
             <li key={post.slug} className="py-5">
-              <PostCard post={post} variant="compact" />
+              <PostCard post={post} variant="compact" headingLevel="h2" />
             </li>
           ))}
         </ul>
