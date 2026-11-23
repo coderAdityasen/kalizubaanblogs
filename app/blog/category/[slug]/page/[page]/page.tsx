@@ -4,6 +4,7 @@ import { getPostSummaries } from "@/lib/post-summaries";
 import { getCategories } from "@/lib/blog-index";
 import { laterPageParams, parsePageParam } from "@/lib/pagination";
 import { CategoryArchive, categoryArchiveMetadata } from "../../archive";
+import { paramsOrNone } from "@/lib/build-safe";
 
 // ISR, 10 minutes. Pages that appear as new posts are published render on first request.
 export const revalidate = 600;
@@ -13,9 +14,10 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = await getPostSummaries();
-  return getCategories(posts).flatMap((cat) =>
-    laterPageParams(cat.count).map(({ page }) => ({ slug: cat.slug, page }))
+  return paramsOrNone("/blog/category/[slug]/page/[page] params", async () =>
+    getCategories(await getPostSummaries()).flatMap((cat) =>
+      laterPageParams(cat.count).map(({ page }) => ({ slug: cat.slug, page }))
+    )
   );
 }
 

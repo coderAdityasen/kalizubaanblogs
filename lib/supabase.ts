@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { BlogPost, CreatePostInput } from "@/types/blog";
 import { SAMPLE_POSTS } from "./sample-data";
+import { deferToRequestDuringBuild, withTimeout } from "./build-safe";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -48,7 +49,10 @@ export function getPublicSupabaseClient(): SupabaseClient | null {
   if (!supabaseUrl || !supabaseAnonKey || !isSupabaseConfigured) {
     return null;
   }
-  return createClient(supabaseUrl, supabaseAnonKey);
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+    global: { fetch: withTimeout() },
+  });
 }
 
 export function getAdminSupabaseClient(): SupabaseClient | null {
@@ -130,11 +134,13 @@ async function read<T>(what: string, run: () => PromiseLike<ReadResult<T>>): Pro
   try {
     result = await run();
   } catch (err: unknown) {
-    throw new SupabaseReadError(what, err);
+    return deferToRequestDuringBuild(what, new SupabaseReadError(what, err));
   }
   if (!result.error) return result.data;
   if (result.error.code === TABLE_MISSING) return undefined;
-  throw new SupabaseReadError(what, result.error);
+  // During `next build` this defers the page to request time instead of
+  // failing the deployment; at runtime it rethrows (keep the last good page).
+  return deferToRequestDuringBuild(what, new SupabaseReadError(what, result.error));
 }
 
 /**

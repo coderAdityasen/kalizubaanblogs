@@ -3,6 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { getPostSummaries } from "@/lib/post-summaries";
 import { laterPageParams, parsePageParam } from "@/lib/pagination";
 import { BlogArchive, blogArchiveMetadata } from "../../archive";
+import { paramsOrNone } from "@/lib/build-safe";
 
 // ISR, 10 minutes. Pages that appear as new posts are published render on first request.
 export const revalidate = 600;
@@ -12,7 +13,9 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return laterPageParams((await getPostSummaries()).length);
+  return paramsOrNone("/blog/page/[page] params", async () =>
+    laterPageParams((await getPostSummaries()).length)
+  );
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
