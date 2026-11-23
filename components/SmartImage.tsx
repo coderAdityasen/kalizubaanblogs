@@ -1,6 +1,6 @@
 import Image, { type ImageProps } from "next/image";
 import { preload } from "react-dom";
-import { canOptimizeImage, isSupabaseStorageImage, supabaseImageSrcSet, supabaseImageUrl } from "@/lib/images";
+import { canOptimizeImage, isSupabaseStorageImage, pipelineImage, supabaseImageSrcSet, supabaseImageUrl } from "@/lib/images";
 
 type SmartImageProps = Omit<ImageProps, "src" | "width" | "height"> & {
   src: string;
@@ -15,6 +15,33 @@ type SmartImageProps = Omit<ImageProps, "src" | "width" | "height"> & {
  * Images from any other host fall back to a plain <img> so nothing breaks.
  */
 export default function SmartImage({ src, alt, width, height, sizes, loading, fetchPriority, className, ...rest }: SmartImageProps) {
+  // Uploaded through the compression pipeline: pre-built WebP copies at
+  // 480/800/1200/full width, so no on-the-fly resizing (and no transform cost).
+  const pipeline = pipelineImage(src);
+  if (pipeline) {
+    const imgSizes = sizes ?? `${width}px`;
+    const fallback = pipeline.url(pipeline.widths.find((w) => w >= 800) ?? pipeline.mainWidth);
+    if (fetchPriority === "high") {
+      preload(fallback, { as: "image", imageSrcSet: pipeline.srcSet, imageSizes: imgSizes, fetchPriority: "high" });
+    }
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={fallback}
+        srcSet={pipeline.srcSet}
+        sizes={imgSizes}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={loading}
+        fetchPriority={fetchPriority}
+        decoding="async"
+        className={className}
+        style={rest.style}
+      />
+    );
+  }
+
   // Next's optimizer is off (Vercel image quota), so covers would ship as the
   // full ~1600px upload. Supabase Storage can resize them itself, so give the
   // browser a srcset and let it pick the smallest copy that fits.

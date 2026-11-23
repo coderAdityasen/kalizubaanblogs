@@ -1,0 +1,86 @@
+/*
+ * Motion: micro, fast, transform/opacity only, never while reading and never
+ * on above-the-fold content at load. Everything here switches off with
+ * prefers-reduced-motion, and every effect is progressive enhancement.
+ */
+
+/* Cross-document View Transitions (Chrome/Edge 126+, Safari 18.2+). */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: var(--dur-base); animation-timing-function: var(--ease-out); }
+
+/* Card hover: 2px lift, image zooms a touch, shadow fades in. */
+.card-lift {
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+.card-lift .card-img { transition: transform var(--dur-slow) var(--ease-out); }
+@media (hover: hover) {
+  .card-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .card-lift:hover .card-img { transform: scale(1.025); }
+}
+.card-lift:focus-within { box-shadow: var(--shadow-hover); }
+
+/* Arrow nudge on "See all ->" style links. */
+.arrow-nudge .arrow { display: inline-block; transition: transform var(--dur-fast) var(--ease-out); }
+.arrow-nudge:hover .arrow, .arrow-nudge:focus-visible .arrow { transform: translateX(3px); }
+
+/* Header gains a hairline + shadow once the page scrolls (scroll-driven, CSS only). */
+@supports (animation-timeline: scroll()) {
+  .header-scroll {
+    animation: header-settle linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 80px;
+  }
+  @keyframes header-settle {
+    from { box-shadow: 0 0 0 0 transparent; border-bottom-color: transparent; }
+    to { box-shadow: 0 6px 20px -16px rgb(0 0 0 / 0.35); border-bottom-color: var(--line); }
+  }
+
+  /* Reading progress bar on articles. */
+  .reading-progress {
+    transform-origin: 0 50%;
+    animation: progress-grow linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes progress-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+}
+@supports not (animation-timeline: scroll()) {
+  .reading-progress { display: none; }
+}
+
+/* Sections fade up as they enter the viewport (below the fold only). */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+  @keyframes reveal-up { from { opacity: 0.001; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+}
+
+/* Mobile menu sheet (native <dialog>). */
+dialog.sheet {
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out),
+    overlay var(--dur-base) allow-discrete, display var(--dur-base) allow-discrete;
+  opacity: 0;
+  transform: translateY(-8px);
+}
+dialog.sheet[open] { opacity: 1; transform: none; }
+@starting-style { dialog.sheet[open] { opacity: 0; transform: translateY(-8px); } }
+dialog.sheet::backdrop { background: rgb(4 10 24 / 0.45); backdrop-filter: blur(2px); }
+
+.theme-icon { transition: transform var(--dur-base) var(--ease-out); }
+.theme-toggle:hover .theme-icon { transform: rotate(20deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .card-lift:hover, .card-lift:hover .card-img { transform: none; }
+}

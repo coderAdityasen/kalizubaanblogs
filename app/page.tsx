@@ -3,7 +3,6 @@ import { checkSupabaseStatus } from "@/lib/supabase";
 import { getPostSummaries } from "@/lib/post-summaries";
 import BlogList from "@/components/BlogList";
 import AdminSetupBanner from "@/components/AdminSetupBanner";
-import Newsletter from "@/components/Newsletter";
 import { HOMEPAGE_POST_COUNT } from "@/lib/pagination";
 
 // ISR, same as /blog: serve the homepage from the CDN cache and rebuild it in
@@ -55,8 +54,6 @@ export default async function HomePage() {
       <main id="latest" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full flex-1">
         <BlogList initialPosts={postSummaries} totalPosts={posts.length} />
 
-        {/* Reader Newsletter Subscription */}
-        <Newsletter />
       </main>
     </div>
   );

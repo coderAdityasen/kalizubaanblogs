@@ -26,12 +26,12 @@ interface PageProps {
 }
 
 /**
- * Re-render each article at most once an hour (ISR). Without this, article
- * pages are built once per deploy and served from cache forever, so edits to
- * a post, its "Keep reading" links and dateModified never reach readers or
- * Google until the next deploy. The publish API also revalidates on demand.
+ * Re-render each article at most once a day (ISR) as a safety net. Publishing
+ * or editing through the API refreshes the page immediately (lib/revalidate.ts),
+ * so a long window costs nothing in freshness and saves ~240 database reads
+ * an hour against the Supabase quota.
  */
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   const posts = await getPostSummaries();

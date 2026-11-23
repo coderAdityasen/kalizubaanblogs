@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import {
   EDITABLE_POST_FIELDS,
   getPostBySlug,
@@ -7,6 +6,7 @@ import {
   type UpdatePostInput,
 } from "@/lib/supabase";
 import { validateAuth } from "@/lib/api-auth";
+import { revalidateAfterWrite } from "@/lib/revalidate";
 
 export async function GET(
   req: NextRequest,
@@ -125,17 +125,8 @@ export async function PATCH(
     }
     const { post, storage } = result;
 
-    // Refresh the article and every listing it appears on ("/blog" as a layout
-    // also covers /blog/category/* and /blog/topics/*, including an old category).
-    try {
-      revalidatePath(`/blog/${post.slug}`);
-      revalidatePath("/");
-      revalidatePath("/blog", "layout");
-      revalidatePath("/sitemap.xml");
-      revalidatePath("/feed.xml");
-    } catch (revalidateError) {
-      console.error("Failed to revalidate cached pages after edit", revalidateError);
-    }
+    // Refresh the article and every listing it appears on (incl. an old category).
+    revalidateAfterWrite(post.slug);
 
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = host.includes("localhost") ? "http" : "https";

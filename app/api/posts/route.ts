@@ -1,20 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { createOrUpdatePost, getPosts, isSupabaseConfigured } from "@/lib/supabase";
 import { CreatePostInput } from "@/types/blog";
 import { validateAuth } from "@/lib/api-auth";
+import { revalidateAfterWrite } from "@/lib/revalidate";
+import { getPostSummaries } from "@/lib/post-summaries";
 
 /**
  * GET /api/posts
- * Lists published blog posts
+ * Lists published blog posts, newest first. Optional ?category= and ?tag=.
+ *
+ * Returns post summaries (every field except the Markdown `content`) from the
+ * shared 10-minute cache, so this public endpoint no longer pulls every
+ * article body from Supabase on each call. Add ?include=content for the full
+ * posts (one uncached database read).
  */
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
     const tag = searchParams.get("tag");
+    const includeContent = (searchParams.get("include") || "").split(",").includes("content");
 
-    let posts = await getPosts();
+    let posts: Array<{ category: string; tags: string[] }> = includeContent ? await getPosts() : await getPostSummaries();
 
     if (category) {
       posts = posts.filter(
@@ -28,12 +35,19 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      count: posts.length,
-      storage: isSupabaseConfigured ? "supabase" : "local_memory",
-      posts,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        count: posts.length,
+        storage: isSupabaseConfigured ? "supabase" : "local_memory",
+        posts,
+      },
+      {
+        headers: includeContent
+          ? { "Cache-Control": "no-store" }
+          : { "Cache-Control": "public, s-maxage=600, stale-while-revalidate=3600" },
+      }
+    );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
@@ -119,17 +133,8 @@ export async function POST(req: NextRequest) {
     });
 
     // Refresh cached pages right away so the new/updated post shows up on the
-    // article page, homepage, blog and category listings and the sitemap
-    // without waiting for the next deploy or the ISR window.
-    try {
-      revalidatePath(`/blog/${post.slug}`);
-      revalidatePath("/");
-      revalidatePath("/blog", "layout");
-      revalidatePath("/sitemap.xml");
-      revalidatePath("/feed.xml");
-    } catch (revalidateError) {
-      console.error("Failed to revalidate cached pages after publish", revalidateError);
-    }
+    // article page, homepage, listings, sitemap and feed without waiting.
+    revalidateAfterWrite(post.slug);
 
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = host.includes("localhost") ? "http" : "https";

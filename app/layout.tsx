@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Suspense } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
+import SiteHeader from "@/components/layout/SiteHeader";
+import SiteFooter from "@/components/layout/SiteFooter";
+import ThemeScript from "@/components/ui/ThemeScript";
 import Script from "next/script";
 import "./globals.css";
 import {
@@ -30,12 +30,24 @@ const geistMono = Geist_Mono({
   preload: false,
 });
 
+// Article body serif (see lib/design.ts ARTICLE_BODY_FONT). Not preloaded:
+// the first screen of every page is sans, so it never competes with the LCP
+// cover; the metric-matched Georgia fallback keeps the swap from shifting text.
+const sourceSerif = Source_Serif_4({
+  variable: "--font-source-serif",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  display: "swap",
+  preload: false,
+  adjustFontFallback: true,
+});
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#fafaf7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0c10" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -104,8 +116,7 @@ export default function RootLayout({
 }) {
   // One WebSite + one Organization for the whole site. alternateName tells
   // Google the brand searches ("kalizubaan blogs") belong to this site.
-  // No SearchAction: the homepage search filters in the browser, there is no
-  // search-results URL for Google to send people to.
+  // SearchAction points at the server-rendered /search?q= results page.
   // sameAs (social profiles) is left out until there are profiles to list.
   const jsonLd = {
     "@context": "https://schema.org",
@@ -119,6 +130,11 @@ export default function RootLayout({
         description: siteDescription,
         inLanguage: "en-IN",
         publisher: { "@id": `${siteUrl}/#organization` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/search?q={search_term_string}` },
+          "query-input": "required name=search_term_string",
+        },
       },
       {
         "@type": "Organization",
@@ -139,9 +155,12 @@ export default function RootLayout({
   return (
     <html
       lang="en-IN"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
+      // The theme script sets data-theme before hydration.
+      suppressHydrationWarning
     >
       <head>
+        <ThemeScript />
         {/* Lets feed readers and browsers discover the RSS feed from any page. */}
         <link
           rel="alternate"
@@ -161,16 +180,12 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 font-sans selection:bg-rose-500 selection:text-white">
-        <Suspense
-          fallback={
-            <div className="h-16 border-b border-zinc-200 dark:border-zinc-800" />
-          }
-        >
-          <Navbar />
-        </Suspense>
-        <div className="flex-1">{children}</div>
-        <Footer />
+      <body className="min-h-full flex flex-col bg-bg text-text font-sans">
+        <SiteHeader />
+        <div id="content" tabIndex={-1} className="flex-1 outline-none">
+          {children}
+        </div>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -20,9 +20,27 @@ declare global {
   var __mockPostsStore: BlogPost[] | undefined;
 }
 
+/**
+ * Local development only: with no Supabase configured, LOCAL_POSTS_FIXTURE can
+ * point at a JSON array of posts to preview the site with realistic content.
+ * Ignored whenever Supabase is configured (production).
+ */
+function loadLocalFixture(): BlogPost[] | null {
+  const file = process.env.LOCAL_POSTS_FIXTURE;
+  if (!file || isSupabaseConfigured) return null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs = require("fs") as typeof import("fs");
+    return JSON.parse(fs.readFileSync(file, "utf8")) as BlogPost[];
+  } catch (err) {
+    console.warn("LOCAL_POSTS_FIXTURE could not be read:", err);
+    return null;
+  }
+}
+
 function getLocalStore(): BlogPost[] {
   if (!globalThis.__mockPostsStore) {
-    globalThis.__mockPostsStore = [...SAMPLE_POSTS];
+    globalThis.__mockPostsStore = loadLocalFixture() ?? [...SAMPLE_POSTS];
   }
   return globalThis.__mockPostsStore;
 }
