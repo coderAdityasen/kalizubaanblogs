@@ -3,7 +3,9 @@ import type { BlogPostSummary } from "@/types/blog";
 import type { BlogCategory } from "@/lib/blog-index";
 import PostCard from "@/components/PostCard";
 import Pagination from "@/components/Pagination";
-import { POSTS_PER_PAGE, type PageInfo } from "@/lib/pagination";
+import Breadcrumbs, { type Crumb } from "@/components/Breadcrumbs";
+import { POSTS_PER_PAGE, pageHref, type PageInfo } from "@/lib/pagination";
+import { absoluteUrl, siteUrl } from "@/lib/site";
 
 interface BlogIndexProps {
   title: string;
@@ -24,6 +26,41 @@ interface BlogIndexProps {
 export default function BlogIndex({ title, intro, posts, pageInfo, categories, activeCategory }: BlogIndexProps) {
   const first = (pageInfo.page - 1) * POSTS_PER_PAGE + 1;
   const last = first + posts.length - 1;
+  const isLaterPage = pageInfo.page > 1;
+
+  // Home › Blog › Category › Page n. The current page is the last crumb and
+  // has no link; everything above it links back up the archive.
+  const crumbs: Crumb[] = [
+    { name: "Home", href: "/" },
+    { name: "Blog", href: activeCategory || isLaterPage ? "/blog" : undefined },
+    ...(activeCategory ? [{ name: title, href: isLaterPage ? pageInfo.basePath : undefined }] : []),
+    ...(isLaterPage ? [{ name: `Page ${pageInfo.page}` }] : []),
+  ];
+
+  // Same CollectionPage + ItemList shape as the topic hubs, so Google can read
+  // /blog and each category as a list of articles rather than a bare page.
+  const pageUrl = absoluteUrl(pageHref(pageInfo.basePath, pageInfo.page));
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${pageUrl}#collection`,
+    url: pageUrl,
+    name: isLaterPage ? `${title} (Page ${pageInfo.page})` : title,
+    description: intro,
+    inLanguage: "en-IN",
+    isPartOf: { "@id": `${absoluteUrl("/")}#website` },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: posts.length,
+      itemListOrder: "https://schema.org/ItemListOrderDescending",
+      itemListElement: posts.map((post, index) => ({
+        "@type": "ListItem",
+        position: first + index,
+        url: absoluteUrl(`/blog/${post.slug}`),
+        name: post.title,
+      })),
+    },
+  };
 
   const pill = (active: boolean) =>
     `px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
@@ -34,17 +71,14 @@ export default function BlogIndex({ title, intro, posts, pageInfo, categories, a
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50/50 dark:bg-zinc-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <section className="border-b border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/40 py-12 sm:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl">
-            {activeCategory ? (
-              <Link
-                href="/blog"
-                className="text-xs font-semibold tracking-wider uppercase text-rose-600 dark:text-rose-400 mb-2 block font-mono hover:underline"
-              >
-                Kali Zubaan Blog
-              </Link>
-            ) : (
+            <div className="mb-4">
+              <Breadcrumbs siteUrl={siteUrl} items={crumbs} />
+            </div>
+            {!activeCategory && (
               <span className="text-xs font-semibold tracking-wider uppercase text-rose-600 dark:text-rose-400 mb-2 block font-mono">
                 Money · Health · Side Hustles · Tech
               </span>
