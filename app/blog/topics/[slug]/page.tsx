@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getPostSummaries } from "@/lib/post-summaries";
 import { toSummaries } from "@/lib/blog-index";
 import { getHub, TOPIC_HUBS } from "@/lib/hubs";
-import PostCard from "@/components/PostCard";
+import PostCard from "@/components/blog/PostCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { absoluteUrl, blogName, siteName } from "@/lib/site";
 
@@ -77,44 +77,47 @@ export default async function TopicHubPage({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-zinc-50/50 dark:bg-zinc-950">
+    <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <section className="border-b border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/40 py-12 sm:py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="mb-6">
-            <Breadcrumbs
-              siteUrl={siteUrl}
-              items={[{ name: "Home", href: "/" }, { name: "Blog", href: "/blog" }, { name: hub.name }]}
-            />
-          </div>
-          <h1 className="font-serif font-black text-3xl sm:text-5xl tracking-tight text-zinc-900 dark:text-white">
-            {hub.name}
-          </h1>
-          <p className="mt-4 max-w-3xl text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
-            {hub.description}
-          </p>
+      <section className="bg-surface-2">
+        <div className="container-kz py-10 sm:py-14">
+          <Breadcrumbs
+            siteUrl={siteUrl}
+            items={[{ name: "Home", href: "/" }, { name: "Blog", href: "/blog" }, { name: hub.name }]}
+          />
+          <p className="kicker mt-8 text-brand">Topic guide · {listed.length} articles</p>
+          <h1 className="text-display mt-2 max-w-4xl text-ink">{hub.name}</h1>
+          <p className="mt-4 max-w-3xl text-[1.0625rem] leading-relaxed text-muted sm:text-lg">{hub.description}</p>
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-10">
+      <div className="container-kz py-12 sm:py-14">
         {pillar && (
-          <section>
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          <section aria-labelledby="pillar-heading" className="mb-16">
+            <h2 id="pillar-heading" className="kicker mb-5 text-muted">
               Start here: the complete guide
             </h2>
-            <PostCard post={toSummaries([pillar])[0]} featured />
+            <PostCard post={toSummaries([pillar])[0]} variant="lead" priority headingLevel="h3" transitionName />
           </section>
         )}
         {clusterPosts.length > 0 && (
-          <section>
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              More in {hub.name}
+          <section aria-labelledby="path-heading">
+            <h2 id="path-heading" className="text-h2 mb-2 text-ink">
+              {pillar ? "Then read, in order" : `In ${hub.name}`}
             </h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <p className="mb-6 text-[0.9375rem] text-muted">Short, focused posts that build on the guide, in reading order.</p>
+            <ol className="divide-y divide-line border-y border-line">
               {toSummaries(clusterPosts).map((post, index) => (
-                <PostCard key={post.slug} post={post} priority={!pillar && index === 0} />
+                <li key={post.slug} className="flex items-start gap-5">
+                  <span aria-hidden="true" className="pt-5 font-mono text-sm font-semibold text-brand tabular-nums">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <PostCard post={post} variant="compact" priority={!pillar && index === 0} />
+                  </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </section>
         )}
       </div>

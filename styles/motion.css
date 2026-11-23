@@ -49,14 +49,18 @@
   .reading-progress { display: none; }
 }
 
-/* Sections fade up as they enter the viewport (below the fold only). */
+/*
+ * Sections drift up slightly as they enter the viewport (below the fold only).
+ * Transform only, never opacity: content is always visible, even to tools that
+ * capture the page without scrolling.
+ */
 @supports (animation-timeline: view()) {
   .reveal {
     animation: reveal-up linear both;
     animation-timeline: view();
-    animation-range: entry 0% entry 40%;
+    animation-range: entry 0% entry 35%;
   }
-  @keyframes reveal-up { from { opacity: 0.001; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes reveal-up { from { transform: translateY(18px); } to { transform: none; } }
 }
 
 /* Mobile menu sheet (native <dialog>). */

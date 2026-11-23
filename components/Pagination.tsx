@@ -25,12 +25,11 @@ export default function Pagination({ page, totalPages, basePath }: PageInfo) {
   if (totalPages <= 1) return null;
 
   const base =
-    "inline-flex items-center justify-center min-w-10 h-10 px-3 rounded-xl text-sm font-semibold transition-colors";
-  const idle =
-    "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700";
+    "inline-flex items-center justify-center min-w-11 h-11 px-3 rounded-[var(--radius-sm)] text-sm font-semibold tabular-nums transition-colors";
+  const idle = "bg-surface text-ink border border-line hover:border-muted";
 
   return (
-    <nav aria-label="Article pages" className="mt-12 flex flex-wrap items-center justify-center gap-2">
+    <nav aria-label="Article pages" className="mt-14 flex flex-wrap items-center justify-center gap-2">
       {page > 1 ? (
         <Link href={pageHref(basePath, page - 1)} rel="prev" className={`${base} ${idle} gap-1`}>
           <ChevronLeft className="w-4 h-4" aria-hidden="true" />
@@ -40,11 +39,11 @@ export default function Pagination({ page, totalPages, basePath }: PageInfo) {
 
       {visiblePages(page, totalPages).map((n, i) =>
         n === "gap" ? (
-          <span key={`gap-${i}`} className="px-1 text-zinc-400" aria-hidden="true">
+          <span key={`gap-${i}`} className="px-1 text-muted" aria-hidden="true">
             …
           </span>
         ) : n === page ? (
-          <span key={n} aria-current="page" className={`${base} bg-indigo-600 text-white shadow-sm`}>
+          <span key={n} aria-current="page" className={`${base} bg-ink text-bg`}>
             {n}
           </span>
         ) : (

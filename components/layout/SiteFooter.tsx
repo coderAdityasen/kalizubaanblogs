@@ -27,7 +27,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 export default function SiteFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="mt-24 border-t hairline bg-surface">
+    <footer className="mt-24 border-t border-line bg-surface">
       <div className="container-kz grid gap-12 py-14 lg:grid-cols-[1.3fr_2fr]">
         <div className="max-w-sm">
           <Link href="/" className="inline-flex items-center gap-3" aria-label="Kali Zubaan home">
@@ -76,7 +76,7 @@ export default function SiteFooter() {
           </FooterColumn>
         </div>
       </div>
-      <div className="border-t hairline">
+      <div className="border-t border-line">
         <div className="container-kz flex flex-col gap-1 py-5 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
           <span>© {year} Kali Zubaan. All rights reserved.</span>
           <span>Written in India for Indian readers.</span>

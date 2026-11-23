@@ -39,7 +39,7 @@ export default function MobileNav({ sections, more }: MobileNavProps) {
           if (e.target === dialogRef.current) close();
         }}
       >
-        <div className="container-kz flex h-16 items-center justify-between border-b hairline">
+        <div className="container-kz flex h-16 items-center justify-between border-b border-line">
           <span className="kicker text-muted">Menu</span>
           <button
             type="button"
@@ -53,7 +53,7 @@ export default function MobileNav({ sections, more }: MobileNavProps) {
           </button>
         </div>
         <nav aria-label="Sections" className="container-kz py-4">
-          <ul className="divide-y hairline border-b">
+          <ul className="divide-y divide-line border-b">
             {sections.map((item) => (
               <li key={item.href} data-cat={item.cat}>
                 <Link

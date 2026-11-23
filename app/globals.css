@@ -110,7 +110,6 @@
   .link-grow:hover,
   .link-grow:focus-visible { background-size: 100% 1px; }
 
-  .hairline { border-color: var(--line); }
 
   .btn {
     display: inline-flex;
