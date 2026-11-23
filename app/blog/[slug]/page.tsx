@@ -11,6 +11,7 @@ import { getRelatedPosts } from "@/lib/related";
 import SmartImage from "@/components/SmartImage";
 import AuthorAvatar from "@/components/AuthorAvatar";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { postTitleTag } from "@/lib/title-tag";
 import { categorySlug } from "@/lib/blog-index";
 import { absoluteUrl, authorName, authorPagePath } from "@/lib/site";
 import { faqJsonLd } from "@/lib/faq";
@@ -57,7 +58,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const ogImage = post.cover_image || `${siteUrl}/og-image.png`;
 
   return {
-    title: post.title,
+    // Long headlines drop or shorten the brand suffix so the headline is not cut off in search results.
+    title: postTitleTag(post.title),
     description: post.excerpt || `${post.title} — Read on Kali Zubaan.`,
     keywords: [
       ...post.tags,
