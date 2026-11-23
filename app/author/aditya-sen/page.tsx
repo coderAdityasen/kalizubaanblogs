@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getPosts } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import { getCategories } from "@/lib/blog-index";
 import { author, authorSameAs } from "@/lib/author";
 import { absoluteUrl, authorName, contactEmail, siteName } from "@/lib/site";
@@ -32,7 +32,7 @@ function Placeholder({ children }: { children: React.ReactNode }) {
 const linkClass = "text-rose-600 dark:text-rose-400 underline underline-offset-2";
 
 export default async function AuthorPage() {
-  const posts = (await getPosts()).filter(
+  const posts = (await getPostSummaries()).filter(
     (post) => !post.author_name || [authorName, "Aditya"].includes(post.author_name)
   );
   const categories = getCategories(posts);

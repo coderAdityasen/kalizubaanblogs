@@ -1,4 +1,4 @@
-import { getPosts } from "@/lib/supabase";
+import { getPostSummaries } from "@/lib/post-summaries";
 import { absoluteUrl, authorName, blogName, contactEmail, siteDescription } from "@/lib/site";
 
 // Cached like the sitemap: rebuilt at most every 10 minutes, and refreshed right
@@ -26,7 +26,7 @@ function absoluteImage(src?: string): string | null {
 }
 
 export async function GET() {
-  const posts = (await getPosts()).slice(0, FEED_LIMIT);
+  const posts = (await getPostSummaries()).slice(0, FEED_LIMIT);
   const feedUrl = absoluteUrl("/feed.xml");
   const lastBuild = posts[0]
     ? new Date(posts[0].updated_at || posts[0].created_at)
