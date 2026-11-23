@@ -27,6 +27,7 @@ export function blogArchiveMetadata(page: number): Metadata {
       description,
       url,
       siteName,
+      locale: "en_IN",
       images: [{ url: "/og-image.png", width: 1200, height: 630, alt: blogIndexTitle }],
     },
     twitter: {

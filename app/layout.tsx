@@ -76,7 +76,8 @@ export const metadata: Metadata = {
     description: siteShortDescription,
     url: siteUrl,
     siteName: "Kali Zubaan",
-    locale: "en_US",
+    // Indian English, matching inLanguage "en-IN" in the JSON-LD and the RSS feed.
+    locale: "en_IN",
     type: "website",
     images: [
       {
@@ -137,7 +138,7 @@ export default function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <head>

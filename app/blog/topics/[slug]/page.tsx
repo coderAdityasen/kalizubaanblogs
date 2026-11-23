@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: hub.description,
       url,
       siteName,
+      locale: "en_IN",
       images: [{ url: "/og-image.png", width: 1200, height: 630, alt: `${hub.name} on ${blogName}` }],
     },
   };
@@ -63,6 +64,7 @@ export default async function TopicHubPage({ params }: PageProps) {
     name: hub.name,
     description: hub.description,
     url,
+    inLanguage: "en-IN",
     mainEntity: {
       "@type": "ItemList",
       itemListElement: listed.map((post, index) => ({
