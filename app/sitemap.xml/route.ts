@@ -88,6 +88,12 @@ async function getSitemapEntries(): Promise<SitemapEntry[]> {
       ];
     }),
     {
+      url: absoluteUrl("/start-here"),
+      lastModified: latestPostDate,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
+    {
       url: absoluteUrl(authorPagePath),
       lastModified: latestPostDate,
       changeFrequency: "monthly" as const,

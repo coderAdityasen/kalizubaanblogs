@@ -4,6 +4,7 @@ import { getPostSummaries } from "@/lib/post-summaries";
 import { getCategories } from "@/lib/blog-index";
 import { author, authorSameAs } from "@/lib/author";
 import { absoluteUrl, authorName, contactEmail, pageSocialMetadata, siteName } from "@/lib/site";
+import { initials } from "@/components/AuthorAvatar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kalizubaan.fun";
@@ -33,7 +34,7 @@ function Placeholder({ children }: { children: React.ReactNode }) {
   );
 }
 
-const linkClass = "text-rose-600 dark:text-rose-400 underline underline-offset-2";
+const linkClass = "text-brand underline underline-offset-2 hover:text-brand-strong";
 
 export default async function AuthorPage() {
   const posts = (await getPostSummaries()).filter(
@@ -70,25 +71,29 @@ export default async function AuthorPage() {
   };
 
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <main className="container-kz py-10 sm:py-14">
+      <div className="mx-auto max-w-[var(--measure)]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       <div className="mb-8">
         <Breadcrumbs siteUrl={siteUrl} items={[{ name: "Home", href: "/" }, { name: authorName }]} />
       </div>
 
-      <header className="mb-10 border-b border-zinc-200 dark:border-zinc-800 pb-8 flex items-start gap-5">
-        {author.photo && (
+      <header className="mb-10 flex items-start gap-5 border-b border-line pb-8">
+        {author.photo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={author.photo} alt={authorName} width={96} height={96} className="w-24 h-24 rounded-full object-cover" />
+          <img src={author.photo} alt={authorName} width={96} height={96} className="h-20 w-20 rounded-full object-cover sm:h-24 sm:w-24" />
+        ) : (
+          <span aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-brand-soft text-2xl font-bold text-brand sm:h-24 sm:w-24">
+            {initials(authorName)}
+          </span>
         )}
         <div>
-          <h1 className="font-serif font-bold text-3xl sm:text-4xl tracking-tight text-zinc-900 dark:text-zinc-50">
-            {authorName}
-          </h1>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+          <p className="kicker text-brand">Author</p>
+          <h1 className="text-h1 mt-2 text-ink">{authorName}</h1>
+          <p className="mt-2 text-muted">
             {author.jobTitle} · {author.location} · Writes {siteName}
           </p>
-          <p className="mt-3 flex flex-wrap gap-4 text-sm">
+          <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
             <a href={author.githubUrl} rel="me noopener" target="_blank" className={linkClass}>GitHub</a>
             {author.linkedinUrl && (
               <a href={author.linkedinUrl} rel="me noopener" target="_blank" className={linkClass}>LinkedIn</a>
@@ -105,7 +110,7 @@ export default async function AuthorPage() {
         <Placeholder>your LinkedIn and X profile URLs (author.linkedinUrl, author.xUrl)</Placeholder>
       )}
 
-      <div className="space-y-6 text-zinc-700 dark:text-zinc-300 leading-relaxed [&_h2]:font-serif [&_h2]:font-bold [&_h2]:text-xl [&_h2]:text-zinc-900 dark:[&_h2]:text-zinc-100 [&_h2]:pt-4">
+      <div className="prose-kz prose-static">
         <h2>About me</h2>
         <p>
           Hi, I&apos;m Aditya Sen, a software developer based in Indore, India. I build web
@@ -118,7 +123,7 @@ export default async function AuthorPage() {
 
         <h2>Credentials</h2>
         {author.credentials.length > 0 ? (
-          <ul className="list-disc pl-6 space-y-1">
+          <ul>
             {author.credentials.map((c) => (
               <li key={c}>{c}</li>
             ))}
@@ -135,7 +140,7 @@ export default async function AuthorPage() {
         )}
 
         <h2>How articles are researched and checked</h2>
-        <ul className="list-disc pl-6 space-y-2">
+        <ul>
           <li>Every figure in an article (rates, prices, dates, percentages) comes from a source listed at the end of that article, and is checked against it before publishing.</li>
           <li>Rules and official numbers are taken from primary sources first, such as SEBI, RBI, NSE, BSE and the Income Tax Department, and from established news outlets after that.</li>
           <li>Finance and health articles carry an in-article note that they are education, not advice. See the <Link href="/disclaimer" className={linkClass}>Disclaimer</Link>.</li>
@@ -158,7 +163,7 @@ export default async function AuthorPage() {
         {categories.length > 0 && (
           <>
             <h2>What I write about</h2>
-            <ul className="list-disc pl-6 space-y-1">
+            <ul>
               {categories.map((c) => (
                 <li key={c.slug}>
                   <Link href={`/blog/category/${c.slug}`} className={linkClass}>{c.name}</Link> ({c.count}{" "}
@@ -172,7 +177,7 @@ export default async function AuthorPage() {
         {recent.length > 0 && (
           <>
             <h2>Latest articles</h2>
-            <ul className="list-disc pl-6 space-y-1">
+            <ul>
               {recent.map((post) => (
                 <li key={post.slug}>
                   <Link href={`/blog/${post.slug}`} className={linkClass}>{post.title}</Link>
@@ -181,6 +186,7 @@ export default async function AuthorPage() {
             </ul>
           </>
         )}
+      </div>
       </div>
     </main>
   );
